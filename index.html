@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ravenloft — Карта Приключений</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cinzel:wght@400;600&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0806;
+  --surface: #13100e;
+  --border: #3a2a1a;
+  --accent: #c8a96e;
+  --blood: #8b1a1a;
+  --text: #d4c4a8;
+  --muted: #7a6a54;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'IM Fell English', serif;
+  overflow: hidden;
+  height: 100vh;
+  width: 100vw;
+}
+#app { display: flex; height: 100vh; }
+
+/* ── SIDEBAR ── */
+#sidebar {
+  width: 260px;
+  flex-shrink: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  z-index: 100;
+}
+#sidebar-header {
+  padding: 20px 16px 14px;
+  border-bottom: 1px solid var(--border);
+  text-align: center;
+  background: linear-gradient(180deg, rgba(139,26,26,0.15) 0%, transparent 100%);
+}
+#sidebar-header h1 {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 13px;
+  color: var(--accent);
+  text-shadow: 0 0 24px rgba(200,169,110,0.5);
+  letter-spacing: 1px;
+  line-height: 1.5;
+}
+#sidebar-header .subtitle {
+  font-size: 10px;
+  color: var(--muted);
+  margin-top: 5px;
+  font-style: italic;
+  letter-spacing: 2px;
+}
+.sidebar-section {
+  padding: 14px 12px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.sidebar-section h2 {
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+.character-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: 4px;
+  border: 1px solid transparent;
+  margin-bottom: 4px;
+  transition: all 0.2s;
+}
+.character-item:hover { background: rgba(200,169,110,0.06); border-color: var(--border); }
+.char-icon { font-size: 20px; width: 28px; text-align: center; flex-shrink: 0; }
+.char-info { flex: 1; min-width: 0; }
+.char-name { font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.char-player { font-size: 10px; color: var(--muted); font-style: italic; }
+.char-actions { display: flex; gap: 4px; flex-shrink: 0; }
+.icon-btn {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  width: 22px; height: 22px;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 11px;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s;
+}
+.icon-btn:hover { color: var(--accent); border-color: var(--accent); }
+.icon-btn.danger:hover { color: #c0392b; border-color: #c0392b; }
+.btn {
+  width: 100%;
+  padding: 8px 12px;
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  letter-spacing: 1px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.2s;
+  margin-top: 6px;
+}
+.btn:hover { border-color: var(--accent); color: var(--accent); background: rgba(200,169,110,0.05); }
+.btn.primary { background: rgba(139,26,26,0.25); border-color: var(--blood); color: #e88; }
+.btn.primary:hover { background: rgba(139,26,26,0.45); color: #faa; }
+.btn.active { border-color: var(--accent); background: rgba(200,169,110,0.12); color: var(--accent); }
+
+/* ── MAP ── */
+#map-container {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  cursor: grab;
+  background: #050302;
+}
+#map-container.dragging { cursor: grabbing; }
+#map-container.adding-poi { cursor: crosshair; }
+#map-viewport {
+  position: absolute;
+  transform-origin: 0 0;
+}
+#map-img {
+  display: block;
+  user-select: none;
+  -webkit-user-drag: none;
+  filter: sepia(15%) contrast(1.05) brightness(0.88);
+}
+#trail-canvas {
+  position: absolute;
+  top: 0; left: 0;
+  pointer-events: none;
+}
+
+/* ── TOKENS ── */
+.map-token {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  cursor: grab;
+  z-index: 10;
+  user-select: none;
+}
+.map-token:active { cursor: grabbing; }
+.token-inner { position: relative; width: 44px; height: 44px; }
+.token-ring {
+  position: absolute; inset: 0;
+  border-radius: 50%;
+  border: 2.5px solid;
+  box-shadow: 0 0 10px currentColor, inset 0 0 8px rgba(0,0,0,0.6);
+}
+.token-emoji {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px;
+  background: rgba(0,0,0,0.72);
+  border-radius: 50%;
+}
+.token-label {
+  position: absolute;
+  top: 100%; left: 50%;
+  transform: translateX(-50%);
+  margin-top: 3px;
+  white-space: nowrap;
+  font-size: 11px;
+  font-family: 'Cinzel', serif;
+  text-shadow: 0 1px 4px black, 0 0 8px black;
+  pointer-events: none;
+}
+
+/* ── POI MARKERS ── */
+.poi-marker {
+  position: absolute;
+  transform: translate(-50%, -100%);
+  z-index: 11;
+  cursor: pointer;
+}
+.poi-pin {
+  width: 30px; height: 30px;
+  border-radius: 50% 50% 50% 0;
+  transform: rotate(-45deg);
+  border: 2px solid rgba(255,255,255,0.25);
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.6);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.poi-marker:hover .poi-pin { transform: rotate(-45deg) scale(1.2); box-shadow: 0 4px 14px rgba(0,0,0,0.8); }
+.poi-pin-icon { transform: rotate(45deg); font-size: 13px; }
+.poi-label {
+  position: absolute;
+  bottom: 32px; left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font-size: 10px;
+  font-family: 'Cinzel', serif;
+  color: white;
+  text-shadow: 0 1px 3px black, 0 0 6px black;
+  pointer-events: none;
+}
+
+/* ── TOOLBAR ── */
+#toolbar {
+  position: absolute;
+  top: 16px; right: 16px;
+  display: flex; flex-direction: column; gap: 6px;
+  z-index: 50;
+}
+.tool-btn {
+  width: 38px; height: 38px;
+  background: rgba(13,10,8,0.88);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s;
+  backdrop-filter: blur(4px);
+}
+.tool-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+/* ── STATUS ── */
+#status-bar {
+  position: absolute;
+  bottom: 16px; left: 50%;
+  transform: translateX(-50%);
+  background: rgba(13,10,8,0.85);
+  border: 1px solid var(--border);
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 11px;
+  color: var(--muted);
+  backdrop-filter: blur(4px);
+  pointer-events: none;
+  z-index: 50;
+  opacity: 0;
+  transition: opacity 0.3s;
+  font-style: italic;
+}
+#connection-dot {
+  position: absolute;
+  bottom: 18px; right: 16px;
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: #2ecc71;
+  box-shadow: 0 0 6px #2ecc71;
+  z-index: 50;
+  transition: all 0.4s;
+}
+#connection-dot.offline { background: #e74c3c; box-shadow: 0 0 6px #e74c3c; }
+
+/* ── VIGNETTE ── */
+#vignette {
+  position: absolute; inset: 0;
+  pointer-events: none; z-index: 5;
+  background: radial-gradient(ellipse at 50% 50%, transparent 55%, rgba(5,3,2,0.55) 100%);
+}
+
+/* ── PLACEHOLDER ── */
+#map-placeholder {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  color: var(--muted);
+  gap: 14px;
+  pointer-events: none;
+}
+#map-placeholder .ph-icon { font-size: 56px; opacity: 0.2; }
+#map-placeholder p { font-size: 13px; opacity: 0.45; max-width: 220px; text-align: center; line-height: 1.7; font-style: italic; }
+
+/* ── MODALS ── */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.75);
+  z-index: 1000;
+  display: flex; align-items: center; justify-content: center;
+  backdrop-filter: blur(3px);
+}
+.modal {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 26px;
+  width: 420px;
+  max-width: 92vw;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+}
+.modal h2 {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 13px;
+  color: var(--accent);
+  margin-bottom: 22px;
+  text-align: center;
+  text-shadow: 0 0 20px rgba(200,169,110,0.3);
+}
+.form-group { margin-bottom: 16px; }
+.form-group label {
+  display: block;
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-family: 'Cinzel', serif;
+  color: var(--muted);
+  margin-bottom: 7px;
+}
+.form-group input,
+.form-group textarea,
+.form-group select {
+  width: 100%;
+  background: rgba(0,0,0,0.45);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 9px 11px;
+  border-radius: 4px;
+  font-family: 'IM Fell English', serif;
+  font-size: 13px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.form-group input:focus,
+.form-group textarea:focus { border-color: var(--accent); }
+.form-group textarea { resize: vertical; min-height: 90px; }
+.emoji-grid {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 4px; margin-top: 4px;
+}
+.emoji-opt {
+  font-size: 20px; padding: 5px;
+  border-radius: 4px; cursor: pointer;
+  text-align: center;
+  border: 2px solid transparent;
+  transition: all 0.15s;
+}
+.emoji-opt:hover { background: rgba(200,169,110,0.12); }
+.emoji-opt.selected { border-color: var(--accent); background: rgba(200,169,110,0.18); }
+.color-grid { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px; }
+.color-opt {
+  width: 28px; height: 28px;
+  border-radius: 50%; cursor: pointer;
+  border: 2px solid transparent;
+  transition: all 0.15s;
+}
+.color-opt:hover, .color-opt.selected { border-color: white; transform: scale(1.2); }
+.modal-actions { display: flex; gap: 8px; margin-top: 22px; }
+.modal-actions .btn { flex: 1; margin-top: 0; }
+
+/* ── POI POPUP ── */
+.poi-popup {
+  position: absolute;
+  background: rgba(10,8,6,0.97);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 14px;
+  width: 270px;
+  z-index: 200;
+  transform: translate(-50%, calc(-100% - 38px));
+  box-shadow: 0 6px 24px rgba(0,0,0,0.9);
+  pointer-events: all;
+  left: 15px;
+}
+.poi-popup::after {
+  content: '';
+  position: absolute;
+  bottom: -7px; left: 50%;
+  width: 12px; height: 12px;
+  background: rgb(10,8,6);
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  transform: translateX(-50%) rotate(45deg);
+}
+.poi-popup h3 { font-family: 'Cinzel', serif; font-size: 13px; color: var(--accent); margin-bottom: 8px; }
+.poi-popup .poi-desc { font-size: 12px; color: var(--text); line-height: 1.55; margin-bottom: 8px; white-space: pre-wrap; }
+.poi-popup img { width: 100%; border-radius: 4px; margin-bottom: 10px; max-height: 160px; object-fit: cover; border: 1px solid var(--border); }
+.poi-popup-actions { display: flex; gap: 6px; margin-top: 10px; }
+.poi-popup-actions .btn { padding: 5px 8px; font-size: 9px; margin-top: 0; }
+
+/* ── MAP URL INPUT ── */
+.map-input {
+  width: 100%;
+  background: rgba(0,0,0,0.4);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 7px 9px;
+  border-radius: 4px;
+  font-size: 11px;
+  outline: none;
+  font-family: monospace;
+  transition: border-color 0.2s;
+}
+.map-input:focus { border-color: var(--accent); }
+
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+</style>
+</head>
+<body>
+
+<div id="app">
+  <!-- ══ SIDEBAR ══ -->
+  <div id="sidebar">
+    <div id="sidebar-header">
+      <h1>Ravenloft<br>Campaign Map</h1>
+      <div class="subtitle">⸻ chronicle ⸻</div>
+    </div>
+
+    <div class="sidebar-section">
+      <h2>⚔ Персонажи</h2>
+      <div id="character-list"></div>
+      <button class="btn" onclick="openAddCharModal()">+ Добавить персонажа</button>
+    </div>
+
+    <div class="sidebar-section">
+      <h2>📍 Метки на карте</h2>
+      <div id="poi-list"></div>
+      <button class="btn primary" id="add-poi-btn" onclick="togglePoiMode()">+ Поставить метку</button>
+    </div>
+
+    <div class="sidebar-section">
+      <h2>🗺 Карта</h2>
+      <label style="font-size:10px; color:var(--muted); display:block; margin-bottom:6px; font-family:'Cinzel',serif; letter-spacing:1px;">URL изображения:</label>
+      <input type="text" id="map-url-input" class="map-input" placeholder="https://i.imgur.com/ваша-карта.jpg">
+      <button class="btn" style="margin-top:6px;" onclick="applyMapUrl()">Применить карту</button>
+      <button class="btn" style="margin-top:4px; color:var(--muted); font-size:9px;" onclick="clearAllTrails()">Очистить все следы</button>
+    </div>
+  </div>
+
+  <!-- ══ MAP AREA ══ -->
+  <div id="map-container">
+    <div id="map-viewport">
+      <img id="map-img" src="" alt="" draggable="false" onload="onMapLoad()">
+      <canvas id="trail-canvas"></canvas>
+    </div>
+
+    <div id="map-placeholder">
+      <div class="ph-icon">🗺️</div>
+      <p>Вставьте URL карты в панели слева, чтобы начать путешествие</p>
+    </div>
+
+    <div id="vignette"></div>
+
+    <div id="toolbar">
+      <button class="tool-btn" onclick="resetView()" title="По центру">⌖</button>
+      <button class="tool-btn" onclick="zoomIn()" title="Приблизить">＋</button>
+      <button class="tool-btn" onclick="zoomOut()" title="Отдалить">－</button>
+    </div>
+
+    <div id="status-bar">Кликни на карту, чтобы поставить метку</div>
+    <div id="connection-dot" title="Подключение к Firebase"></div>
+  </div>
+</div>
+
+<!-- ══ ADD CHARACTER MODAL ══ -->
+<div class="modal-overlay" id="char-modal" style="display:none">
+  <div class="modal">
+    <h2>⚔ Новый персонаж</h2>
+    <div class="form-group">
+      <label>Имя персонажа</label>
+      <input type="text" id="char-name-input" placeholder="Имя">
+    </div>
+    <div class="form-group">
+      <label>Игрок</label>
+      <input type="text" id="char-player-input" placeholder="Ник игрока">
+    </div>
+    <div class="form-group">
+      <label>Иконка</label>
+      <div class="emoji-grid" id="emoji-picker"></div>
+    </div>
+    <div class="form-group">
+      <label>Цвет следа</label>
+      <div class="color-grid" id="color-picker"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeCharModal()">Отмена</button>
+      <button class="btn primary" onclick="saveCharacter()">Создать</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ POI MODAL ══ -->
+<div class="modal-overlay" id="poi-modal" style="display:none">
+  <div class="modal">
+    <h2 id="poi-modal-title">📍 Новая метка</h2>
+    <div class="form-group">
+      <label>Название</label>
+      <input type="text" id="poi-title-input" placeholder="Название места или события">
+    </div>
+    <div class="form-group">
+      <label>Описание</label>
+      <textarea id="poi-text-input" placeholder="Что здесь произошло?"></textarea>
+    </div>
+    <div class="form-group">
+      <label>URL картинки (необязательно)</label>
+      <input type="text" id="poi-img-input" placeholder="https://...">
+    </div>
+    <div class="form-group">
+      <label>Тип метки</label>
+      <div class="emoji-grid" id="poi-type-picker"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn" onclick="cancelPoi()">Отмена</button>
+      <button class="btn primary" onclick="savePoi()">Сохранить</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp }    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, onValue, set, push, remove, update }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+// ═══════════════ FIREBASE ═══════════════
+const firebaseConfig = {
+  apiKey: "AIzaSyAGMntUXh4jF31S2FvDKoMlhxQmfoNkzss",
+  authDomain: "ravenloft-map.firebaseapp.com",
+  databaseURL: "https://ravenloft-map-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "ravenloft-map",
+  storageBucket: "ravenloft-map.firebasestorage.app",
+  messagingSenderId: "1031036200691",
+  appId: "1:1031036200691:web:8d99617ce0d94084e13986"
+};
+const fbApp = initializeApp(firebaseConfig);
+const db    = getDatabase(fbApp);
+
+// ═══════════════ CONSTANTS ═══════════════
+const CHAR_EMOJIS = ['⚔️','🧙','🏹','🛡️','🗡️','🔮','🐺','💀','🦇','🕯️','👁️','🌙','🧛','🩸','🌹','🔱'];
+const POI_TYPES   = ['📍','⚔️','💀','🏰','🏚️','🌲','🗝️','💎','📜','🩸','🔥','👁️','🕯️','⚰️','🧿','🌑'];
+const COLORS      = ['#c8a96e','#c0392b','#2980b9','#27ae60','#8e44ad','#e67e22','#1abc9c','#ecf0f1','#e84393','#00bcd4'];
+
+// ═══════════════ STATE ═══════════════
+let mapScale=1, mapOffX=0, mapOffY=0;
+let isPanning=false, panSX=0, panSY=0, panOX=0, panOY=0;
+let mapW=0, mapH=0;
+let isPoiMode=false;
+let pendingPoiX=0, pendingPoiY=0;
+let selEmoji=CHAR_EMOJIS[0], selColor=COLORS[0], selPoiType=POI_TYPES[0];
+let characters={}, pois={};
+let draggingId=null, dragOX=0, dragOY=0;
+let editingPoiId=null;
+let openPopupId=null;
+
+// ═══════════════ INIT ═══════════════
+function init() {
+  buildEmojiPicker('emoji-picker',    CHAR_EMOJIS, v => selEmoji    = v, CHAR_EMOJIS[0]);
+  buildEmojiPicker('poi-type-picker', POI_TYPES,   v => selPoiType  = v, POI_TYPES[0]);
+  buildColorPicker();
+
+  onValue(ref(db,'characters'), snap => {
+    characters = snap.val() || {};
+    renderCharacters();
+    renderCharSidebar();
+    drawTrails();
+  });
+  onValue(ref(db,'pois'), snap => {
+    pois = snap.val() || {};
+    renderPois();
+    renderPoiSidebar();
+  });
+  onValue(ref(db,'mapUrl'), snap => {
+    const url = snap.val();
+    if (url) {
+      document.getElementById('map-url-input').value = url;
+      loadMapImage(url);
+    }
+  });
+  onValue(ref(db,'.info/connected'), snap => {
+    const dot = document.getElementById('connection-dot');
+    if (snap.val()) { dot.className=''; dot.title='Подключено'; }
+    else            { dot.className='offline'; dot.title='Офлайн'; }
+  });
+
+  setupInteraction();
+}
+
+// ═══════════════ MAP LOADING ═══════════════
+function loadMapImage(url) {
+  const img = document.getElementById('map-img');
+  img.src = url;
+  document.getElementById('map-placeholder').style.display = 'none';
+}
+
+window.onMapLoad = function() {
+  const img = document.getElementById('map-img');
+  mapW = img.naturalWidth;
+  mapH = img.naturalHeight;
+  img.style.width  = mapW + 'px';
+  img.style.height = mapH + 'px';
+  const canvas = document.getElementById('trail-canvas');
+  canvas.width  = mapW;  canvas.style.width  = mapW + 'px';
+  canvas.height = mapH;  canvas.style.height = mapH + 'px';
+  resetView();
+  renderCharacters();
+  renderPois();
+  drawTrails();
+};
+
+// ═══════════════ PAN / ZOOM ═══════════════
+function setupInteraction() {
+  const container = document.getElementById('map-container');
+
+  container.addEventListener('mousedown', e => {
+    if (e.target.closest('.map-token') || e.target.closest('.poi-marker')) return;
+    if (isPoiMode) return;
+    isPanning=true; panSX=e.clientX; panSY=e.clientY; panOX=mapOffX; panOY=mapOffY;
+    container.classList.add('dragging');
+  });
+
+  window.addEventListener('mousemove', e => {
+    if (isPanning) {
+      mapOffX = panOX + (e.clientX - panSX);
+      mapOffY = panOY + (e.clientY - panSY);
+      applyTransform();
+    }
+    if (draggingId) {
+      const c = screenToMap(e.clientX, e.clientY);
+      if (c) {
+        const t = document.getElementById('tok-' + draggingId);
+        if (t) { t.style.left = (c.x*mapW)+'px'; t.style.top = (c.y*mapH)+'px'; }
+      }
+    }
+  });
+
+  window.addEventListener('mouseup', e => {
+    if (isPanning) { isPanning=false; container.classList.remove('dragging'); }
+    if (draggingId) {
+      const c = screenToMap(e.clientX, e.clientY);
+      if (c) commitMove(draggingId, c.x, c.y);
+      draggingId = null;
+    }
+  });
+
+  container.addEventListener('wheel', e => {
+    e.preventDefault();
+    const rect = container.getBoundingClientRect();
+    const mx = e.clientX - rect.left, my = e.clientY - rect.top;
+    const factor = e.deltaY > 0 ? 0.88 : 1.14;
+    const ns = Math.min(Math.max(mapScale * factor, 0.15), 10);
+    mapOffX = mx - (mx - mapOffX) * (ns / mapScale);
+    mapOffY = my - (my - mapOffY) * (ns / mapScale);
+    mapScale = ns;
+    applyTransform(); drawTrails();
+  }, { passive: false });
+
+  container.addEventListener('click', e => {
+    if (!isPoiMode || e.target.closest('.poi-marker')) return;
+    const c = screenToMap(e.clientX, e.clientY);
+    if (!c) return;
+    pendingPoiX = c.x; pendingPoiY = c.y;
+    editingPoiId = null;
+    document.getElementById('poi-modal-title').textContent = '📍 Новая метка';
+    document.getElementById('poi-title-input').value = '';
+    document.getElementById('poi-text-input').value  = '';
+    document.getElementById('poi-img-input').value   = '';
+    document.getElementById('poi-modal').style.display = 'flex';
+    container.classList.remove('adding-poi');
+  });
+
+  // Touch support
+  let lastTouchDist = 0;
+  container.addEventListener('touchstart', e => {
+    if (e.touches.length === 2) {
+      lastTouchDist = Math.hypot(
+        e.touches[0].clientX - e.touches[1].clientX,
+        e.touches[0].clientY - e.touches[1].clientY
+      );
+    }
+  }, { passive: true });
+  container.addEventListener('touchmove', e => {
+    if (e.touches.length === 2) {
+      e.preventDefault();
+      const d = Math.hypot(
+        e.touches[0].clientX - e.touches[1].clientX,
+        e.touches[0].clientY - e.touches[1].clientY
+      );
+      const factor = d / lastTouchDist;
+      const rect = container.getBoundingClientRect();
+      const cx = (e.touches[0].clientX + e.touches[1].clientX)/2 - rect.left;
+      const cy = (e.touches[0].clientY + e.touches[1].clientY)/2 - rect.top;
+      const ns = Math.min(Math.max(mapScale * factor, 0.15), 10);
+      mapOffX = cx - (cx - mapOffX) * (ns / mapScale);
+      mapOffY = cy - (cy - mapOffY) * (ns / mapScale);
+      mapScale = ns;
+      lastTouchDist = d;
+      applyTransform(); drawTrails();
+    }
+  }, { passive: false });
+}
+
+function screenToMap(sx, sy) {
+  if (!mapW) return null;
+  const r = document.getElementById('map-container').getBoundingClientRect();
+  return { x: (sx - r.left - mapOffX) / mapScale / mapW,
+           y: (sy - r.top  - mapOffY) / mapScale / mapH };
+}
+
+function applyTransform() {
+  document.getElementById('map-viewport').style.transform =
+    `translate(${mapOffX}px,${mapOffY}px) scale(${mapScale})`;
+}
+
+window.resetView = function() {
+  if (!mapW) return;
+  const c = document.getElementById('map-container');
+  mapScale = Math.min(c.clientWidth/mapW, c.clientHeight/mapH) * 0.92;
+  mapOffX  = (c.clientWidth  - mapW*mapScale) / 2;
+  mapOffY  = (c.clientHeight - mapH*mapScale) / 2;
+  applyTransform(); drawTrails();
+};
+window.zoomIn  = function() { zoom(1.25); };
+window.zoomOut = function() { zoom(0.8);  };
+function zoom(f) {
+  const c = document.getElementById('map-container');
+  const cx=c.clientWidth/2, cy=c.clientHeight/2;
+  const ns = Math.min(Math.max(mapScale*f,0.15),10);
+  mapOffX = cx - (cx - mapOffX)*(ns/mapScale);
+  mapOffY = cy - (cy - mapOffY)*(ns/mapScale);
+  mapScale = ns;
+  applyTransform(); drawTrails();
+}
+
+// ═══════════════ CHARACTERS ═══════════════
+function renderCharacters() {
+  document.querySelectorAll('.map-token').forEach(e => e.remove());
+  if (!mapW) return;
+  Object.entries(characters).forEach(([id, ch]) => {
+    const t = document.createElement('div');
+    t.className='map-token'; t.id='tok-'+id;
+    t.style.left=(ch.x*mapW)+'px'; t.style.top=(ch.y*mapH)+'px';
+    t.innerHTML=`
+      <div class="token-inner">
+        <div class="token-ring" style="color:${ch.color};border-color:${ch.color}"></div>
+        <div class="token-emoji">${ch.icon}</div>
+      </div>
+      <div class="token-label" style="color:${ch.color}">${ch.name}</div>`;
+    t.addEventListener('mousedown', e => {
+      e.stopPropagation();
+      draggingId = id;
+      e.preventDefault();
+    });
+    document.getElementById('map-viewport').appendChild(t);
+  });
+}
+
+function commitMove(id, nx, ny) {
+  const ch = characters[id];
+  if (!ch) return;
+  const trail = ch.trail ? [...ch.trail] : [];
+  trail.push({ x: ch.x, y: ch.y });
+  if (trail.length > 300) trail.splice(0, trail.length - 300);
+  update(ref(db,'characters/'+id), { x: nx, y: ny, trail });
+}
+
+function renderCharSidebar() {
+  const list = document.getElementById('character-list');
+  list.innerHTML = '';
+  if (!Object.keys(characters).length) {
+    list.innerHTML = '<p style="font-size:11px;color:var(--muted);font-style:italic;padding:2px 0">Пока нет персонажей</p>';
+    return;
+  }
+  Object.entries(characters).forEach(([id, ch]) => {
+    const el = document.createElement('div');
+    el.className = 'character-item';
+    el.innerHTML = `
+      <div class="char-icon">${ch.icon}</div>
+      <div class="char-info">
+        <div class="char-name" style="color:${ch.color}">${ch.name}</div>
+        <div class="char-player">${ch.player||''}</div>
+      </div>
+      <div class="char-actions">
+        <button class="icon-btn danger" onclick="deleteChar('${id}')" title="Удалить">✕</button>
+      </div>`;
+    list.appendChild(el);
+  });
+}
+
+function drawTrails() {
+  const canvas = document.getElementById('trail-canvas');
+  if (!canvas.width) return;
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  Object.values(characters).forEach(ch => {
+    const trail = ch.trail || [];
+    if (!trail.length) return;
+    ctx.beginPath();
+    ctx.setLineDash([7,5]);
+    ctx.strokeStyle = ch.color;
+    ctx.lineWidth = 2;
+    ctx.globalAlpha = 0.65;
+    ctx.moveTo(trail[0].x*mapW, trail[0].y*mapH);
+    trail.forEach(p => ctx.lineTo(p.x*mapW, p.y*mapH));
+    ctx.lineTo(ch.x*mapW, ch.y*mapH);
+    ctx.stroke();
+    ctx.setLineDash([]); ctx.globalAlpha = 1;
+  });
+}
+
+// ═══════════════ POIs ═══════════════
+function renderPois() {
+  document.querySelectorAll('.poi-marker').forEach(e => e.remove());
+  if (!mapW) return;
+  Object.entries(pois).forEach(([id, poi]) => {
+    const m = document.createElement('div');
+    m.className='poi-marker'; m.id='poi-'+id;
+    m.style.left=(poi.x*mapW)+'px'; m.style.top=(poi.y*mapH)+'px';
+    const hue = strHue(poi.title||'');
+    m.innerHTML=`
+      <div class="poi-label">${poi.title||''}</div>
+      <div class="poi-pin" style="background:hsl(${hue},55%,22%)">
+        <span class="poi-pin-icon">${poi.type||'📍'}</span>
+      </div>`;
+    m.addEventListener('click', e => { e.stopPropagation(); togglePopup(id, m); });
+    document.getElementById('map-viewport').appendChild(m);
+  });
+}
+
+function renderPoiSidebar() {
+  const list = document.getElementById('poi-list');
+  list.innerHTML = '';
+  if (!Object.keys(pois).length) {
+    list.innerHTML = '<p style="font-size:11px;color:var(--muted);font-style:italic;padding:2px 0">Пока нет меток</p>';
+    return;
+  }
+  Object.entries(pois).forEach(([id, poi]) => {
+    const el = document.createElement('div');
+    el.className = 'character-item';
+    el.style.cursor = 'pointer';
+    el.innerHTML=`
+      <div class="char-icon">${poi.type||'📍'}</div>
+      <div class="char-info">
+        <div class="char-name" style="font-size:12px">${poi.title||'Без названия'}</div>
+      </div>
+      <div class="char-actions">
+        <button class="icon-btn" onclick="startEditPoi('${id}')" title="Редактировать">✎</button>
+        <button class="icon-btn danger" onclick="deletePoi('${id}')" title="Удалить">✕</button>
+      </div>`;
+    list.appendChild(el);
+  });
+}
+
+function togglePopup(id, markerEl) {
+  document.querySelectorAll('.poi-popup').forEach(e => e.remove());
+  if (openPopupId === id) { openPopupId=null; return; }
+  openPopupId = id;
+  const poi = pois[id]; if (!poi) return;
+
+  const popup = document.createElement('div');
+  popup.className = 'poi-popup';
+  popup.innerHTML = `
+    ${poi.imageUrl ? `<img src="${poi.imageUrl}" alt="" onerror="this.style.display='none'">` : ''}
+    <h3>${poi.title||'Без названия'}</h3>
+    ${poi.text ? `<div class="poi-desc">${poi.text}</div>` : ''}
+    <div class="poi-popup-actions">
+      <button class="btn" onclick="startEditPoi('${id}')">✎ Изменить</button>
+      <button class="btn" style="color:#e88;border-color:#8b1a1a" onclick="deletePoi('${id}');document.querySelectorAll('.poi-popup').forEach(e=>e.remove());openPopupId=null">✕ Удалить</button>
+    </div>`;
+  markerEl.appendChild(popup);
+
+  setTimeout(() => {
+    document.addEventListener('click', function close(e) {
+      if (!popup.contains(e.target) && !markerEl.contains(e.target)) {
+        popup.remove(); openPopupId=null;
+        document.removeEventListener('click', close);
+      }
+    });
+  }, 0);
+}
+
+window.startEditPoi = function(id) {
+  const poi = pois[id]; if (!poi) return;
+  document.querySelectorAll('.poi-popup').forEach(e => e.remove());
+  openPopupId = null;
+  editingPoiId = id;
+  pendingPoiX = poi.x; pendingPoiY = poi.y;
+  document.getElementById('poi-modal-title').textContent = '✎ Редактировать метку';
+  document.getElementById('poi-title-input').value = poi.title  || '';
+  document.getElementById('poi-text-input').value  = poi.text   || '';
+  document.getElementById('poi-img-input').value   = poi.imageUrl || '';
+  selPoiType = poi.type || '📍';
+  // Highlight current type
+  document.querySelectorAll('#poi-type-picker .emoji-opt').forEach(el => {
+    el.classList.toggle('selected', el.textContent.trim() === selPoiType);
+  });
+  document.getElementById('poi-modal').style.display='flex';
+};
+
+// ═══════════════ MODAL HANDLERS ═══════════════
+window.openAddCharModal = function() {
+  document.getElementById('char-modal').style.display='flex';
+  document.getElementById('char-name-input').value   = '';
+  document.getElementById('char-player-input').value = '';
+};
+window.closeCharModal = function() {
+  document.getElementById('char-modal').style.display='none';
+};
+window.saveCharacter = function() {
+  const name = document.getElementById('char-name-input').value.trim();
+  if (!name) { document.getElementById('char-name-input').focus(); return; }
+  push(ref(db,'characters'), {
+    name,
+    player: document.getElementById('char-player-input').value.trim(),
+    icon: selEmoji, color: selColor,
+    x: 0.5, y: 0.5, trail: []
+  });
+  closeCharModal();
+};
+window.deleteChar = function(id) {
+  if (confirm('Удалить персонажа?')) remove(ref(db,'characters/'+id));
+};
+
+window.togglePoiMode = function() {
+  isPoiMode = !isPoiMode;
+  const btn = document.getElementById('add-poi-btn');
+  const con = document.getElementById('map-container');
+  btn.textContent = isPoiMode ? '✕ Отмена' : '+ Поставить метку';
+  btn.classList.toggle('active', isPoiMode);
+  con.classList.toggle('adding-poi', isPoiMode);
+  setStatus(isPoiMode ? 'Кликни на карту, чтобы поставить метку' : '');
+};
+window.cancelPoi = function() {
+  editingPoiId = null;
+  document.getElementById('poi-modal').style.display='none';
+  isPoiMode=false;
+  document.getElementById('add-poi-btn').textContent='+ Поставить метку';
+  document.getElementById('add-poi-btn').classList.remove('active');
+  document.getElementById('map-container').classList.remove('adding-poi');
+  setStatus('');
+};
+window.savePoi = function() {
+  const title    = document.getElementById('poi-title-input').value.trim();
+  const text     = document.getElementById('poi-text-input').value.trim();
+  const imageUrl = document.getElementById('poi-img-input').value.trim();
+  const data = { title, text, imageUrl, type: selPoiType, x: pendingPoiX, y: pendingPoiY };
+  if (editingPoiId) update(ref(db,'pois/'+editingPoiId), data);
+  else              push(ref(db,'pois'), data);
+  cancelPoi();
+};
+window.deletePoi = function(id) {
+  if (confirm('Удалить метку?')) remove(ref(db,'pois/'+id));
+};
+window.applyMapUrl = function() {
+  const url = document.getElementById('map-url-input').value.trim();
+  if (url) set(ref(db,'mapUrl'), url);
+};
+window.clearAllTrails = function() {
+  if (!confirm('Очистить все пунктирные следы на карте?')) return;
+  Object.keys(characters).forEach(id => update(ref(db,'characters/'+id), { trail: [] }));
+};
+
+// ═══════════════ UI BUILDERS ═══════════════
+function buildEmojiPicker(containerId, emojis, onSelect, initial) {
+  const c = document.getElementById(containerId); c.innerHTML='';
+  emojis.forEach(e => {
+    const el = document.createElement('div');
+    el.className = 'emoji-opt' + (e===initial?' selected':'');
+    el.textContent = e;
+    el.addEventListener('click', () => {
+      c.querySelectorAll('.emoji-opt').forEach(x=>x.classList.remove('selected'));
+      el.classList.add('selected'); onSelect(e);
+    });
+    c.appendChild(el);
+  });
+}
+function buildColorPicker() {
+  const c = document.getElementById('color-picker');
+  COLORS.forEach(col => {
+    const el = document.createElement('div');
+    el.className='color-opt'+(col===selColor?' selected':'');
+    el.style.background=col;
+    el.addEventListener('click',()=>{
+      c.querySelectorAll('.color-opt').forEach(x=>x.classList.remove('selected'));
+      el.classList.add('selected'); selColor=col;
+    });
+    c.appendChild(el);
+  });
+}
+
+function strHue(s) {
+  let h=0; for(let i=0;i<s.length;i++) h=(h*31+s.charCodeAt(i))%360; return h;
+}
+function setStatus(msg) {
+  const bar = document.getElementById('status-bar');
+  bar.textContent = msg||''; bar.style.opacity = msg?'1':'0';
+}
+
+// ═══════════════ START ═══════════════
+init();
+</script>
+</body>
+</html>
