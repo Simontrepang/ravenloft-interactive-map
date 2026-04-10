@@ -17,25 +17,19 @@
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
-  background: var(--bg);
-  color: var(--text);
+  background: var(--bg); color: var(--text);
   font-family: 'IM Fell English', serif;
-  overflow: hidden;
-  height: 100vh;
-  width: 100vw;
+  overflow: hidden; height: 100vh; width: 100vw;
 }
 #app { display: flex; height: 100vh; }
 
 /* ── SIDEBAR ── */
 #sidebar {
-  width: 260px;
-  flex-shrink: 0;
+  width: 260px; flex-shrink: 0;
   background: var(--surface);
   border-right: 1px solid var(--border);
-  display: flex;
-  flex-direction: column;
-  overflow-y: auto;
-  z-index: 100;
+  display: flex; flex-direction: column;
+  overflow-y: auto; z-index: 100;
 }
 #sidebar-header {
   padding: 20px 16px 14px;
@@ -45,18 +39,13 @@ body {
 }
 #sidebar-header h1 {
   font-family: 'Cinzel Decorative', serif;
-  font-size: 13px;
-  color: var(--accent);
+  font-size: 13px; color: var(--accent);
   text-shadow: 0 0 24px rgba(200,169,110,0.5);
-  letter-spacing: 1px;
-  line-height: 1.5;
+  letter-spacing: 1px; line-height: 1.5;
 }
 #sidebar-header .subtitle {
-  font-size: 10px;
-  color: var(--muted);
-  margin-top: 5px;
-  font-style: italic;
-  letter-spacing: 2px;
+  font-size: 10px; color: var(--muted);
+  margin-top: 5px; font-style: italic; letter-spacing: 2px;
 }
 .sidebar-section {
   padding: 14px 12px;
@@ -65,20 +54,14 @@ body {
 }
 .sidebar-section h2 {
   font-family: 'Cinzel', serif;
-  font-size: 9px;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  color: var(--muted);
+  font-size: 9px; letter-spacing: 3px;
+  text-transform: uppercase; color: var(--muted);
   margin-bottom: 10px;
 }
 .character-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 8px;
-  border-radius: 4px;
-  border: 1px solid transparent;
-  margin-bottom: 4px;
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px 8px; border-radius: 4px;
+  border: 1px solid transparent; margin-bottom: 4px;
   transition: all 0.2s;
 }
 .character-item:hover { background: rgba(200,169,110,0.06); border-color: var(--border); }
@@ -88,31 +71,20 @@ body {
 .char-player { font-size: 10px; color: var(--muted); font-style: italic; }
 .char-actions { display: flex; gap: 4px; flex-shrink: 0; }
 .icon-btn {
-  background: none;
-  border: 1px solid var(--border);
-  color: var(--muted);
-  width: 22px; height: 22px;
-  border-radius: 3px;
-  cursor: pointer;
-  font-size: 11px;
+  background: none; border: 1px solid var(--border);
+  color: var(--muted); width: 22px; height: 22px;
+  border-radius: 3px; cursor: pointer; font-size: 11px;
   display: flex; align-items: center; justify-content: center;
   transition: all 0.15s;
 }
 .icon-btn:hover { color: var(--accent); border-color: var(--accent); }
 .icon-btn.danger:hover { color: #c0392b; border-color: #c0392b; }
 .btn {
-  width: 100%;
-  padding: 8px 12px;
-  background: none;
-  border: 1px solid var(--border);
-  color: var(--text);
-  font-family: 'Cinzel', serif;
-  font-size: 10px;
-  letter-spacing: 1px;
-  cursor: pointer;
-  border-radius: 4px;
-  transition: all 0.2s;
-  margin-top: 6px;
+  width: 100%; padding: 8px 12px;
+  background: none; border: 1px solid var(--border);
+  color: var(--text); font-family: 'Cinzel', serif;
+  font-size: 10px; letter-spacing: 1px; cursor: pointer;
+  border-radius: 4px; transition: all 0.2s; margin-top: 6px;
 }
 .btn:hover { border-color: var(--accent); color: var(--accent); background: rgba(200,169,110,0.05); }
 .btn.primary { background: rgba(139,26,26,0.25); border-color: var(--blood); color: #e88; }
@@ -121,60 +93,44 @@ body {
 
 /* ── MAP ── */
 #map-container {
-  flex: 1;
-  position: relative;
-  overflow: hidden;
-  cursor: grab;
-  background: #050302;
+  flex: 1; position: relative;
+  overflow: hidden; cursor: grab; background: #050302;
 }
 #map-container.dragging { cursor: grabbing; }
 #map-container.adding-poi { cursor: crosshair; }
-#map-viewport {
-  position: absolute;
-  transform-origin: 0 0;
-}
+#map-viewport { position: absolute; transform-origin: 0 0; }
 #map-img {
-  display: block;
-  user-select: none;
-  -webkit-user-drag: none;
+  display: block; user-select: none; -webkit-user-drag: none;
   filter: sepia(15%) contrast(1.05) brightness(0.88);
 }
-#trail-canvas {
-  position: absolute;
-  top: 0; left: 0;
-  pointer-events: none;
-}
+#trail-canvas { position: absolute; top: 0; left: 0; pointer-events: none; }
 
 /* ── TOKENS ── */
 .map-token {
   position: absolute;
   transform: translate(-50%, -50%);
-  cursor: grab;
-  z-index: 10;
-  user-select: none;
+  cursor: grab; z-index: 10; user-select: none;
 }
 .map-token:active { cursor: grabbing; }
-.token-inner { position: relative; width: 44px; height: 44px; }
+.map-token.selected .token-ring {
+  box-shadow: 0 0 0 3px white, 0 0 20px currentColor, inset 0 0 8px rgba(0,0,0,0.6) !important;
+}
+.token-inner { position: relative; }
 .token-ring {
-  position: absolute; inset: 0;
-  border-radius: 50%;
+  position: absolute; inset: 0; border-radius: 50%;
   border: 2.5px solid;
   box-shadow: 0 0 10px currentColor, inset 0 0 8px rgba(0,0,0,0.6);
+  transition: box-shadow 0.2s;
 }
 .token-emoji {
   position: absolute; inset: 0;
   display: flex; align-items: center; justify-content: center;
-  font-size: 22px;
-  background: rgba(0,0,0,0.72);
-  border-radius: 50%;
+  background: rgba(0,0,0,0.72); border-radius: 50%;
 }
 .token-label {
-  position: absolute;
-  top: 100%; left: 50%;
-  transform: translateX(-50%);
-  margin-top: 3px;
-  white-space: nowrap;
-  font-size: 11px;
+  position: absolute; top: 100%; left: 50%;
+  transform: translateX(-50%); margin-top: 3px;
+  white-space: nowrap; font-size: 11px;
   font-family: 'Cinzel', serif;
   text-shadow: 0 1px 4px black, 0 0 8px black;
   pointer-events: none;
@@ -184,11 +140,9 @@ body {
 .poi-marker {
   position: absolute;
   transform: translate(-50%, -100%);
-  z-index: 11;
-  cursor: pointer;
+  z-index: 11; cursor: pointer;
 }
 .poi-pin {
-  width: 30px; height: 30px;
   border-radius: 50% 50% 50% 0;
   transform: rotate(-45deg);
   border: 2px solid rgba(255,255,255,0.25);
@@ -197,74 +151,66 @@ body {
   transition: transform 0.2s, box-shadow 0.2s;
 }
 .poi-marker:hover .poi-pin { transform: rotate(-45deg) scale(1.2); box-shadow: 0 4px 14px rgba(0,0,0,0.8); }
-.poi-pin-icon { transform: rotate(45deg); font-size: 13px; }
+.poi-pin-icon { transform: rotate(45deg); }
 .poi-label {
-  position: absolute;
-  bottom: 32px; left: 50%;
+  position: absolute; bottom: 105%; left: 50%;
   transform: translateX(-50%);
-  white-space: nowrap;
-  font-size: 10px;
-  font-family: 'Cinzel', serif;
-  color: white;
+  white-space: nowrap; font-size: 10px;
+  font-family: 'Cinzel', serif; color: white;
   text-shadow: 0 1px 3px black, 0 0 6px black;
   pointer-events: none;
 }
 
+/* ── SELECT BADGE ── */
+#select-badge {
+  position: absolute; bottom: 16px; left: 50%;
+  transform: translateX(-50%);
+  background: rgba(200,169,110,0.12);
+  border: 1px solid var(--accent); color: var(--accent);
+  padding: 5px 16px; border-radius: 20px;
+  font-family: 'Cinzel', serif; font-size: 11px;
+  pointer-events: none; z-index: 50; display: none;
+  backdrop-filter: blur(4px); letter-spacing: 0.5px;
+}
+
 /* ── TOOLBAR ── */
 #toolbar {
-  position: absolute;
-  top: 16px; right: 16px;
-  display: flex; flex-direction: column; gap: 6px;
-  z-index: 50;
+  position: absolute; top: 16px; right: 16px;
+  display: flex; flex-direction: column; gap: 6px; z-index: 50;
 }
 .tool-btn {
   width: 38px; height: 38px;
   background: rgba(13,10,8,0.88);
-  border: 1px solid var(--border);
-  color: var(--text);
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 16px;
+  border: 1px solid var(--border); color: var(--text);
+  border-radius: 6px; cursor: pointer; font-size: 16px;
   display: flex; align-items: center; justify-content: center;
-  transition: all 0.2s;
-  backdrop-filter: blur(4px);
+  transition: all 0.2s; backdrop-filter: blur(4px);
 }
 .tool-btn:hover { border-color: var(--accent); color: var(--accent); }
 
 /* ── STATUS ── */
 #status-bar {
-  position: absolute;
-  bottom: 16px; left: 50%;
+  position: absolute; bottom: 16px; left: 50%;
   transform: translateX(-50%);
   background: rgba(13,10,8,0.85);
   border: 1px solid var(--border);
-  padding: 6px 16px;
-  border-radius: 20px;
-  font-size: 11px;
-  color: var(--muted);
-  backdrop-filter: blur(4px);
-  pointer-events: none;
-  z-index: 50;
-  opacity: 0;
-  transition: opacity 0.3s;
+  padding: 6px 16px; border-radius: 20px;
+  font-size: 11px; color: var(--muted);
+  backdrop-filter: blur(4px); pointer-events: none;
+  z-index: 50; opacity: 0; transition: opacity 0.3s;
   font-style: italic;
 }
 #connection-dot {
-  position: absolute;
-  bottom: 18px; right: 16px;
-  width: 8px; height: 8px;
-  border-radius: 50%;
-  background: #2ecc71;
-  box-shadow: 0 0 6px #2ecc71;
-  z-index: 50;
-  transition: all 0.4s;
+  position: absolute; bottom: 18px; right: 16px;
+  width: 8px; height: 8px; border-radius: 50%;
+  background: #2ecc71; box-shadow: 0 0 6px #2ecc71;
+  z-index: 50; transition: all 0.4s;
 }
 #connection-dot.offline { background: #e74c3c; box-shadow: 0 0 6px #e74c3c; }
 
 /* ── VIGNETTE ── */
 #vignette {
-  position: absolute; inset: 0;
-  pointer-events: none; z-index: 5;
+  position: absolute; inset: 0; pointer-events: none; z-index: 5;
   background: radial-gradient(ellipse at 50% 50%, transparent 55%, rgba(5,3,2,0.55) 100%);
 }
 
@@ -273,9 +219,7 @@ body {
   position: absolute; inset: 0;
   display: flex; flex-direction: column;
   align-items: center; justify-content: center;
-  color: var(--muted);
-  gap: 14px;
-  pointer-events: none;
+  color: var(--muted); gap: 14px; pointer-events: none;
 }
 #map-placeholder .ph-icon { font-size: 56px; opacity: 0.2; }
 #map-placeholder p { font-size: 13px; opacity: 0.45; max-width: 220px; text-align: center; line-height: 1.7; font-style: italic; }
@@ -283,79 +227,65 @@ body {
 /* ── MODALS ── */
 .modal-overlay {
   position: fixed; inset: 0;
-  background: rgba(0,0,0,0.75);
-  z-index: 1000;
+  background: rgba(0,0,0,0.75); z-index: 1000;
   display: flex; align-items: center; justify-content: center;
   backdrop-filter: blur(3px);
 }
 .modal {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 26px;
-  width: 420px;
-  max-width: 92vw;
-  max-height: 90vh;
-  overflow-y: auto;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 8px; padding: 26px;
+  width: 420px; max-width: 92vw;
+  max-height: 90vh; overflow-y: auto;
   box-shadow: 0 20px 60px rgba(0,0,0,0.8);
 }
 .modal h2 {
   font-family: 'Cinzel Decorative', serif;
-  font-size: 13px;
-  color: var(--accent);
-  margin-bottom: 22px;
-  text-align: center;
+  font-size: 13px; color: var(--accent);
+  margin-bottom: 22px; text-align: center;
   text-shadow: 0 0 20px rgba(200,169,110,0.3);
 }
 .form-group { margin-bottom: 16px; }
-.form-group label {
-  display: block;
-  font-size: 9px;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  font-family: 'Cinzel', serif;
-  color: var(--muted);
-  margin-bottom: 7px;
+.form-group > label {
+  display: block; font-size: 9px; letter-spacing: 2px;
+  text-transform: uppercase; font-family: 'Cinzel', serif;
+  color: var(--muted); margin-bottom: 7px;
 }
-.form-group input,
-.form-group textarea,
-.form-group select {
-  width: 100%;
-  background: rgba(0,0,0,0.45);
-  border: 1px solid var(--border);
-  color: var(--text);
-  padding: 9px 11px;
-  border-radius: 4px;
+.form-group input[type=text],
+.form-group textarea {
+  width: 100%; background: rgba(0,0,0,0.45);
+  border: 1px solid var(--border); color: var(--text);
+  padding: 9px 11px; border-radius: 4px;
   font-family: 'IM Fell English', serif;
-  font-size: 13px;
-  outline: none;
-  transition: border-color 0.2s;
+  font-size: 13px; outline: none; transition: border-color 0.2s;
 }
-.form-group input:focus,
+.form-group input[type=text]:focus,
 .form-group textarea:focus { border-color: var(--accent); }
 .form-group textarea { resize: vertical; min-height: 90px; }
 .emoji-grid {
-  display: grid;
-  grid-template-columns: repeat(8, 1fr);
+  display: grid; grid-template-columns: repeat(8,1fr);
   gap: 4px; margin-top: 4px;
 }
 .emoji-opt {
-  font-size: 20px; padding: 5px;
-  border-radius: 4px; cursor: pointer;
-  text-align: center;
-  border: 2px solid transparent;
-  transition: all 0.15s;
+  font-size: 20px; padding: 5px; border-radius: 4px;
+  cursor: pointer; text-align: center;
+  border: 2px solid transparent; transition: all 0.15s;
 }
 .emoji-opt:hover { background: rgba(200,169,110,0.12); }
 .emoji-opt.selected { border-color: var(--accent); background: rgba(200,169,110,0.18); }
 .color-grid { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px; }
 .color-opt {
-  width: 28px; height: 28px;
-  border-radius: 50%; cursor: pointer;
-  border: 2px solid transparent;
-  transition: all 0.15s;
+  width: 28px; height: 28px; border-radius: 50%;
+  cursor: pointer; border: 2px solid transparent; transition: all 0.15s;
 }
 .color-opt:hover, .color-opt.selected { border-color: white; transform: scale(1.2); }
+.slider-row {
+  display: flex; gap: 8px; align-items: center; margin-top: 6px;
+}
+.slider-row input[type=range] { flex: 1; accent-color: var(--accent); cursor: pointer; }
+.slider-val {
+  font-family: 'Cinzel', serif; font-size: 12px;
+  color: var(--accent); min-width: 36px; text-align: right;
+}
 .modal-actions { display: flex; gap: 8px; margin-top: 22px; }
 .modal-actions .btn { flex: 1; margin-top: 0; }
 
@@ -363,19 +293,14 @@ body {
 .poi-popup {
   position: absolute;
   background: rgba(10,8,6,0.97);
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  padding: 14px;
-  width: 270px;
-  z-index: 200;
-  transform: translate(-50%, calc(-100% - 38px));
+  border: 1px solid var(--border); border-radius: 6px;
+  padding: 14px; width: 270px; z-index: 200;
+  transform: translate(-50%, calc(-100% - 10px));
   box-shadow: 0 6px 24px rgba(0,0,0,0.9);
-  pointer-events: all;
-  left: 15px;
+  pointer-events: all; left: 15px;
 }
 .poi-popup::after {
-  content: '';
-  position: absolute;
+  content: ''; position: absolute;
   bottom: -7px; left: 50%;
   width: 12px; height: 12px;
   background: rgb(10,8,6);
@@ -386,35 +311,21 @@ body {
 .poi-popup h3 { font-family: 'Cinzel', serif; font-size: 13px; color: var(--accent); margin-bottom: 8px; }
 .poi-popup .poi-desc { font-size: 12px; color: var(--text); line-height: 1.55; margin-bottom: 8px; white-space: pre-wrap; }
 .poi-img-wrap {
-  width: 100%;
-  margin-bottom: 10px;
-  border-radius: 4px;
-  overflow: hidden;
-  border: 1px solid var(--border);
-  background: #000;
-  line-height: 0;
+  width: 100%; margin-bottom: 10px; border-radius: 4px;
+  overflow: hidden; border: 1px solid var(--border);
+  background: #000; line-height: 0;
 }
-.poi-img-wrap img {
-  width: 100%;
-  max-height: 200px;
-  object-fit: contain;
-  display: block;
-}
+.poi-img-wrap img { width: 100%; max-height: 200px; object-fit: contain; display: block; }
 .poi-popup-actions { display: flex; gap: 6px; margin-top: 10px; }
 .poi-popup-actions .btn { padding: 5px 8px; font-size: 9px; margin-top: 0; }
 
 /* ── MAP URL INPUT ── */
 .map-input {
-  width: 100%;
-  background: rgba(0,0,0,0.4);
-  border: 1px solid var(--border);
-  color: var(--text);
-  padding: 7px 9px;
-  border-radius: 4px;
-  font-size: 11px;
-  outline: none;
-  font-family: monospace;
-  transition: border-color 0.2s;
+  width: 100%; background: rgba(0,0,0,0.4);
+  border: 1px solid var(--border); color: var(--text);
+  padding: 7px 9px; border-radius: 4px;
+  font-size: 11px; outline: none;
+  font-family: monospace; transition: border-color 0.2s;
 }
 .map-input:focus { border-color: var(--accent); }
 
@@ -424,8 +335,8 @@ body {
 </style>
 </head>
 <body>
-
 <div id="app">
+
   <!-- ══ SIDEBAR ══ -->
   <div id="sidebar">
     <div id="sidebar-header">
@@ -447,10 +358,10 @@ body {
 
     <div class="sidebar-section">
       <h2>🗺 Карта</h2>
-      <label style="font-size:10px; color:var(--muted); display:block; margin-bottom:6px; font-family:'Cinzel',serif; letter-spacing:1px;">URL изображения:</label>
-      <input type="text" id="map-url-input" class="map-input" placeholder="https://i.imgur.com/ваша-карта.jpg">
+      <label style="font-size:10px;color:var(--muted);display:block;margin-bottom:6px;font-family:'Cinzel',serif;letter-spacing:1px;">URL изображения:</label>
+      <input type="text" id="map-url-input" class="map-input" placeholder="https://i.imgur.com/...jpg">
       <button class="btn" style="margin-top:6px;" onclick="applyMapUrl()">Применить карту</button>
-      <button class="btn" style="margin-top:4px; color:var(--muted); font-size:9px;" onclick="clearAllTrails()">Очистить все следы</button>
+      <button class="btn" style="margin-top:4px;color:var(--muted);font-size:9px;" onclick="clearAllTrails()">Очистить все следы</button>
     </div>
   </div>
 
@@ -460,29 +371,26 @@ body {
       <img id="map-img" src="" alt="" draggable="false" onload="onMapLoad()">
       <canvas id="trail-canvas"></canvas>
     </div>
-
     <div id="map-placeholder">
       <div class="ph-icon">🗺️</div>
       <p>Вставьте URL карты в панели слева, чтобы начать путешествие</p>
     </div>
-
     <div id="vignette"></div>
-
     <div id="toolbar">
       <button class="tool-btn" onclick="resetView()" title="По центру">⌖</button>
       <button class="tool-btn" onclick="zoomIn()" title="Приблизить">＋</button>
       <button class="tool-btn" onclick="zoomOut()" title="Отдалить">－</button>
     </div>
-
-    <div id="status-bar">Кликни на карту, чтобы поставить метку</div>
+    <div id="status-bar"></div>
+    <div id="select-badge"></div>
     <div id="connection-dot" title="Подключение к Firebase"></div>
   </div>
 </div>
 
-<!-- ══ ADD CHARACTER MODAL ══ -->
+<!-- ══ CHARACTER MODAL ══ -->
 <div class="modal-overlay" id="char-modal" style="display:none">
   <div class="modal">
-    <h2>⚔ Новый персонаж</h2>
+    <h2 id="char-modal-title">⚔ Новый персонаж</h2>
     <div class="form-group">
       <label>Имя персонажа</label>
       <input type="text" id="char-name-input" placeholder="Имя">
@@ -500,17 +408,24 @@ body {
       <div class="color-grid" id="color-picker"></div>
     </div>
     <div class="form-group">
+      <label>Размер токена</label>
+      <div class="slider-row">
+        <input type="range" id="token-size-input" min="24" max="96" value="44" step="4"
+          oninput="selTokenSize=+this.value;document.getElementById('token-size-val').textContent=this.value+'px'">
+        <span id="token-size-val" class="slider-val">44px</span>
+      </div>
+    </div>
+    <div class="form-group">
       <label>Толщина следа</label>
-      <div style="display:flex; gap:8px; align-items:center; margin-top:4px;">
-        <input type="range" id="trail-width-input" min="1" max="6" value="2" step="1"
-          style="flex:1; accent-color:var(--accent);"
-          oninput="selLineWidth=+this.value; document.getElementById('trail-width-val').textContent=this.value">
-        <span id="trail-width-val" style="font-family:'Cinzel',serif; font-size:12px; color:var(--accent); min-width:14px; text-align:right;">2</span>
+      <div class="slider-row">
+        <input type="range" id="trail-width-input" min="1" max="8" value="2" step="1"
+          oninput="selLineWidth=+this.value;document.getElementById('trail-width-val').textContent=this.value">
+        <span id="trail-width-val" class="slider-val">2</span>
       </div>
     </div>
     <div class="modal-actions">
       <button class="btn" onclick="closeCharModal()">Отмена</button>
-      <button class="btn primary" onclick="saveCharacter()">Создать</button>
+      <button class="btn primary" id="char-save-btn" onclick="saveCharacter()">Создать</button>
     </div>
   </div>
 </div>
@@ -531,7 +446,7 @@ body {
       <label>Картинка</label>
       <input type="text" id="poi-img-input" placeholder="URL: https://...">
       <div style="display:flex;align-items:center;gap:8px;margin-top:8px;">
-        <label style="text-transform:none;letter-spacing:0;font-size:11px;color:var(--muted);font-family:'IM Fell English',serif;font-style:italic;margin:0;">или загрузить файл:</label>
+        <span style="font-size:11px;color:var(--muted);font-style:italic;">или загрузить:</span>
         <input type="file" id="poi-img-file" accept="image/*"
           style="font-size:11px;color:var(--muted);flex:1;"
           onchange="handlePoiImageFile(this)">
@@ -544,6 +459,14 @@ body {
       <label>Тип метки</label>
       <div class="emoji-grid" id="poi-type-picker"></div>
     </div>
+    <div class="form-group">
+      <label>Размер метки</label>
+      <div class="slider-row">
+        <input type="range" id="poi-size-input" min="16" max="60" value="30" step="2"
+          oninput="selPoiSize=+this.value;document.getElementById('poi-size-val').textContent=this.value+'px'">
+        <span id="poi-size-val" class="slider-val">30px</span>
+      </div>
+    </div>
     <div class="modal-actions">
       <button class="btn" onclick="cancelPoi()">Отмена</button>
       <button class="btn primary" onclick="savePoi()">Сохранить</button>
@@ -552,11 +475,11 @@ body {
 </div>
 
 <script type="module">
-import { initializeApp }    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, onValue, set, push, remove, update }
   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-// ═══════════════ FIREBASE ═══════════════
+// ── FIREBASE ──
 const firebaseConfig = {
   apiKey: "AIzaSyAGMntUXh4jF31S2FvDKoMlhxQmfoNkzss",
   authDomain: "ravenloft-map.firebaseapp.com",
@@ -566,257 +489,278 @@ const firebaseConfig = {
   messagingSenderId: "1031036200691",
   appId: "1:1031036200691:web:8d99617ce0d94084e13986"
 };
-const fbApp = initializeApp(firebaseConfig);
-const db    = getDatabase(fbApp);
+const db = getDatabase(initializeApp(firebaseConfig));
 
-// ═══════════════ CONSTANTS ═══════════════
+// ── CONSTANTS ──
 const CHAR_EMOJIS = ['⚔️','🧙','🏹','🛡️','🗡️','🔮','🐺','💀','🦇','🕯️','👁️','🌙','🧛','🩸','🌹','🔱'];
 const POI_TYPES   = ['📍','⚔️','💀','🏰','🏚️','🌲','🗝️','💎','📜','🩸','🔥','👁️','🕯️','⚰️','🧿','🌑'];
 const COLORS      = ['#c8a96e','#c0392b','#2980b9','#27ae60','#8e44ad','#e67e22','#1abc9c','#ecf0f1','#e84393','#00bcd4'];
 
-// ═══════════════ STATE ═══════════════
+// ── STATE ──
 let mapScale=1, mapOffX=0, mapOffY=0;
 let isPanning=false, panSX=0, panSY=0, panOX=0, panOY=0;
 let mapW=0, mapH=0;
 let isPoiMode=false;
-let pendingPoiX=0, pendingPoiY=0;
-let selEmoji=CHAR_EMOJIS[0], selColor=COLORS[0], selPoiType=POI_TYPES[0], selLineWidth=2;
-let characters={}, pois={};
-let draggingId=null, dragOX=0, dragOY=0;
-let editingPoiId=null;
-let openPopupId=null;
+let pendingPoiX=0, pendingPoiY=0, pendingPoiImageData=null;
 
-// ═══════════════ INIT ═══════════════
+// Pickers
+let selEmoji=CHAR_EMOJIS[0], selColor=COLORS[0];
+let selLineWidth=2, selTokenSize=44, selPoiSize=30, selPoiType=POI_TYPES[0];
+
+// Data
+let characters={}, pois={};
+
+// Drag
+let draggingId=null;
+let dragStartMapX=0, dragStartMapY=0;
+let dragStartPositions={};   // {id:{x,y}}
+
+// Selection
+let selectedIds = new Set();
+
+// Edit
+let editingCharId=null, editingPoiId=null, openPopupId=null;
+
+// ── INIT ──
 function init() {
-  buildEmojiPicker('emoji-picker',    CHAR_EMOJIS, v => selEmoji    = v, CHAR_EMOJIS[0]);
-  buildEmojiPicker('poi-type-picker', POI_TYPES,   v => selPoiType  = v, POI_TYPES[0]);
+  buildEmojiPicker('emoji-picker',    CHAR_EMOJIS, v => selEmoji   = v, CHAR_EMOJIS[0]);
+  buildEmojiPicker('poi-type-picker', POI_TYPES,   v => selPoiType = v, POI_TYPES[0]);
   buildColorPicker();
 
   onValue(ref(db,'characters'), snap => {
     characters = snap.val() || {};
-    renderCharacters();
-    renderCharSidebar();
-    drawTrails();
+    renderCharacters(); renderCharSidebar(); drawTrails();
   });
   onValue(ref(db,'pois'), snap => {
     pois = snap.val() || {};
-    renderPois();
-    renderPoiSidebar();
+    renderPois(); renderPoiSidebar();
   });
   onValue(ref(db,'mapUrl'), snap => {
     const url = snap.val();
-    if (url) {
-      document.getElementById('map-url-input').value = url;
-      loadMapImage(url);
-    }
+    if (url) { document.getElementById('map-url-input').value=url; loadMapImage(url); }
   });
   onValue(ref(db,'.info/connected'), snap => {
-    const dot = document.getElementById('connection-dot');
-    if (snap.val()) { dot.className=''; dot.title='Подключено'; }
-    else            { dot.className='offline'; dot.title='Офлайн'; }
+    const d = document.getElementById('connection-dot');
+    d.className = snap.val() ? '' : 'offline';
+    d.title = snap.val() ? 'Подключено' : 'Офлайн';
   });
 
   setupInteraction();
 }
 
-// ═══════════════ MAP LOADING ═══════════════
+// ── MAP ──
 function loadMapImage(url) {
-  const img = document.getElementById('map-img');
-  img.src = url;
+  document.getElementById('map-img').src = url;
   document.getElementById('map-placeholder').style.display = 'none';
 }
-
 window.onMapLoad = function() {
   const img = document.getElementById('map-img');
-  mapW = img.naturalWidth;
-  mapH = img.naturalHeight;
-  img.style.width  = mapW + 'px';
-  img.style.height = mapH + 'px';
-  const canvas = document.getElementById('trail-canvas');
-  canvas.width  = mapW;  canvas.style.width  = mapW + 'px';
-  canvas.height = mapH;  canvas.style.height = mapH + 'px';
-  resetView();
-  renderCharacters();
-  renderPois();
-  drawTrails();
+  mapW=img.naturalWidth; mapH=img.naturalHeight;
+  img.style.width=mapW+'px'; img.style.height=mapH+'px';
+  const cv=document.getElementById('trail-canvas');
+  cv.width=mapW; cv.style.width=mapW+'px';
+  cv.height=mapH; cv.style.height=mapH+'px';
+  resetView(); renderCharacters(); renderPois(); drawTrails();
 };
 
-// ═══════════════ PAN / ZOOM ═══════════════
+// ── INTERACTION ──
 function setupInteraction() {
-  const container = document.getElementById('map-container');
+  const con = document.getElementById('map-container');
 
-  container.addEventListener('mousedown', e => {
+  con.addEventListener('mousedown', e => {
     if (e.target.closest('.map-token') || e.target.closest('.poi-marker')) return;
     if (isPoiMode) return;
+    selectedIds.clear(); updateSelectionVisuals();
     isPanning=true; panSX=e.clientX; panSY=e.clientY; panOX=mapOffX; panOY=mapOffY;
-    container.classList.add('dragging');
+    con.classList.add('dragging');
   });
 
   window.addEventListener('mousemove', e => {
     if (isPanning) {
-      mapOffX = panOX + (e.clientX - panSX);
-      mapOffY = panOY + (e.clientY - panSY);
+      mapOffX=panOX+(e.clientX-panSX);
+      mapOffY=panOY+(e.clientY-panSY);
       applyTransform();
     }
     if (draggingId) {
-      const c = screenToMap(e.clientX, e.clientY);
-      if (c) {
-        const t = document.getElementById('tok-' + draggingId);
-        if (t) { t.style.left = (c.x*mapW)+'px'; t.style.top = (c.y*mapH)+'px'; }
-      }
+      const c=screenToMap(e.clientX,e.clientY);
+      if (!c) return;
+      const dx=c.x-dragStartMapX, dy=c.y-dragStartMapY;
+      selectedIds.forEach(id => {
+        const t=document.getElementById('tok-'+id);
+        const sp=dragStartPositions[id];
+        if (t&&sp) { t.style.left=((sp.x+dx)*mapW)+'px'; t.style.top=((sp.y+dy)*mapH)+'px'; }
+      });
     }
   });
 
   window.addEventListener('mouseup', e => {
-    if (isPanning) { isPanning=false; container.classList.remove('dragging'); }
+    if (isPanning) { isPanning=false; con.classList.remove('dragging'); }
     if (draggingId) {
-      const c = screenToMap(e.clientX, e.clientY);
-      if (c) commitMove(draggingId, c.x, c.y);
-      draggingId = null;
+      const c=screenToMap(e.clientX,e.clientY);
+      if (c) {
+        const dx=c.x-dragStartMapX, dy=c.y-dragStartMapY;
+        selectedIds.forEach(id => {
+          const sp=dragStartPositions[id];
+          if (sp) commitMove(id, sp.x+dx, sp.y+dy);
+        });
+      }
+      draggingId=null; dragStartPositions={};
     }
   });
 
-  container.addEventListener('wheel', e => {
+  con.addEventListener('wheel', e => {
     e.preventDefault();
-    const rect = container.getBoundingClientRect();
-    const mx = e.clientX - rect.left, my = e.clientY - rect.top;
-    const factor = e.deltaY > 0 ? 0.88 : 1.14;
-    const ns = Math.min(Math.max(mapScale * factor, 0.15), 10);
-    mapOffX = mx - (mx - mapOffX) * (ns / mapScale);
-    mapOffY = my - (my - mapOffY) * (ns / mapScale);
-    mapScale = ns;
-    applyTransform(); drawTrails();
-  }, { passive: false });
+    const r=con.getBoundingClientRect();
+    const mx=e.clientX-r.left, my=e.clientY-r.top;
+    const f=e.deltaY>0?0.88:1.14;
+    const ns=Math.min(Math.max(mapScale*f,0.15),10);
+    mapOffX=mx-(mx-mapOffX)*(ns/mapScale);
+    mapOffY=my-(my-mapOffY)*(ns/mapScale);
+    mapScale=ns; applyTransform(); drawTrails();
+  }, { passive:false });
 
-  container.addEventListener('click', e => {
-    if (!isPoiMode || e.target.closest('.poi-marker')) return;
-    const c = screenToMap(e.clientX, e.clientY);
-    if (!c) return;
-    pendingPoiX = c.x; pendingPoiY = c.y;
-    editingPoiId = null;
-    document.getElementById('poi-modal-title').textContent = '📍 Новая метка';
-    document.getElementById('poi-title-input').value = '';
-    document.getElementById('poi-text-input').value  = '';
-    document.getElementById('poi-img-input').value   = '';
-    document.getElementById('poi-modal').style.display = 'flex';
-    container.classList.remove('adding-poi');
+  con.addEventListener('click', e => {
+    if (!isPoiMode||e.target.closest('.poi-marker')) return;
+    const c=screenToMap(e.clientX,e.clientY); if (!c) return;
+    pendingPoiX=c.x; pendingPoiY=c.y; editingPoiId=null;
+    document.getElementById('poi-modal-title').textContent='📍 Новая метка';
+    ['poi-title-input','poi-text-input','poi-img-input'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('poi-img-preview').style.display='none';
+    document.getElementById('poi-modal').style.display='flex';
+    con.classList.remove('adding-poi');
   });
 
-  // Touch support
-  let lastTouchDist = 0;
-  container.addEventListener('touchstart', e => {
-    if (e.touches.length === 2) {
-      lastTouchDist = Math.hypot(
-        e.touches[0].clientX - e.touches[1].clientX,
-        e.touches[0].clientY - e.touches[1].clientY
-      );
-    }
-  }, { passive: true });
-  container.addEventListener('touchmove', e => {
-    if (e.touches.length === 2) {
-      e.preventDefault();
-      const d = Math.hypot(
-        e.touches[0].clientX - e.touches[1].clientX,
-        e.touches[0].clientY - e.touches[1].clientY
-      );
-      const factor = d / lastTouchDist;
-      const rect = container.getBoundingClientRect();
-      const cx = (e.touches[0].clientX + e.touches[1].clientX)/2 - rect.left;
-      const cy = (e.touches[0].clientY + e.touches[1].clientY)/2 - rect.top;
-      const ns = Math.min(Math.max(mapScale * factor, 0.15), 10);
-      mapOffX = cx - (cx - mapOffX) * (ns / mapScale);
-      mapOffY = cy - (cy - mapOffY) * (ns / mapScale);
-      mapScale = ns;
-      lastTouchDist = d;
-      applyTransform(); drawTrails();
-    }
-  }, { passive: false });
+  // Touch pinch
+  let ltd=0;
+  con.addEventListener('touchstart', e => { if(e.touches.length===2) ltd=td(e); },{passive:true});
+  con.addEventListener('touchmove', e => {
+    if (e.touches.length!==2) return;
+    e.preventDefault();
+    const d=td(e), f=d/ltd;
+    const r=con.getBoundingClientRect();
+    const cx=(e.touches[0].clientX+e.touches[1].clientX)/2-r.left;
+    const cy=(e.touches[0].clientY+e.touches[1].clientY)/2-r.top;
+    const ns=Math.min(Math.max(mapScale*f,0.15),10);
+    mapOffX=cx-(cx-mapOffX)*(ns/mapScale);
+    mapOffY=cy-(cy-mapOffY)*(ns/mapScale);
+    mapScale=ns; ltd=d; applyTransform(); drawTrails();
+  },{passive:false});
 }
-
-function screenToMap(sx, sy) {
+function td(e) { return Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY); }
+function screenToMap(sx,sy) {
   if (!mapW) return null;
-  const r = document.getElementById('map-container').getBoundingClientRect();
-  return { x: (sx - r.left - mapOffX) / mapScale / mapW,
-           y: (sy - r.top  - mapOffY) / mapScale / mapH };
+  const r=document.getElementById('map-container').getBoundingClientRect();
+  return {x:(sx-r.left-mapOffX)/mapScale/mapW, y:(sy-r.top-mapOffY)/mapScale/mapH};
 }
-
 function applyTransform() {
-  document.getElementById('map-viewport').style.transform =
-    `translate(${mapOffX}px,${mapOffY}px) scale(${mapScale})`;
+  document.getElementById('map-viewport').style.transform=`translate(${mapOffX}px,${mapOffY}px) scale(${mapScale})`;
 }
-
 window.resetView = function() {
   if (!mapW) return;
-  const c = document.getElementById('map-container');
-  mapScale = Math.min(c.clientWidth/mapW, c.clientHeight/mapH) * 0.92;
-  mapOffX  = (c.clientWidth  - mapW*mapScale) / 2;
-  mapOffY  = (c.clientHeight - mapH*mapScale) / 2;
+  const c=document.getElementById('map-container');
+  mapScale=Math.min(c.clientWidth/mapW,c.clientHeight/mapH)*0.92;
+  mapOffX=(c.clientWidth-mapW*mapScale)/2;
+  mapOffY=(c.clientHeight-mapH*mapScale)/2;
   applyTransform(); drawTrails();
 };
-window.zoomIn  = function() { zoom(1.25); };
-window.zoomOut = function() { zoom(0.8);  };
+window.zoomIn  = ()=>zoom(1.25);
+window.zoomOut = ()=>zoom(0.8);
 function zoom(f) {
-  const c = document.getElementById('map-container');
+  const c=document.getElementById('map-container');
   const cx=c.clientWidth/2, cy=c.clientHeight/2;
-  const ns = Math.min(Math.max(mapScale*f,0.15),10);
-  mapOffX = cx - (cx - mapOffX)*(ns/mapScale);
-  mapOffY = cy - (cy - mapOffY)*(ns/mapScale);
-  mapScale = ns;
-  applyTransform(); drawTrails();
+  const ns=Math.min(Math.max(mapScale*f,0.15),10);
+  mapOffX=cx-(cx-mapOffX)*(ns/mapScale);
+  mapOffY=cy-(cy-mapOffY)*(ns/mapScale);
+  mapScale=ns; applyTransform(); drawTrails();
 }
 
-// ═══════════════ CHARACTERS ═══════════════
+// ── CHARACTERS ──
 function renderCharacters() {
-  document.querySelectorAll('.map-token').forEach(e => e.remove());
+  document.querySelectorAll('.map-token').forEach(e=>e.remove());
   if (!mapW) return;
-  Object.entries(characters).forEach(([id, ch]) => {
-    const t = document.createElement('div');
-    t.className='map-token'; t.id='tok-'+id;
+  Object.entries(characters).forEach(([id,ch]) => {
+    const sz=ch.tokenSize||44, fsz=Math.round(sz*0.5);
+    const t=document.createElement('div');
+    t.className='map-token'+(selectedIds.has(id)?' selected':'');
+    t.id='tok-'+id;
     t.style.left=(ch.x*mapW)+'px'; t.style.top=(ch.y*mapH)+'px';
     t.innerHTML=`
-      <div class="token-inner">
+      <div class="token-inner" style="width:${sz}px;height:${sz}px">
         <div class="token-ring" style="color:${ch.color};border-color:${ch.color}"></div>
-        <div class="token-emoji">${ch.icon}</div>
+        <div class="token-emoji" style="font-size:${fsz}px">${ch.icon}</div>
       </div>
       <div class="token-label" style="color:${ch.color}">${ch.name}</div>`;
+
     t.addEventListener('mousedown', e => {
       e.stopPropagation();
-      draggingId = id;
+      // Shift+click: toggle selection, no drag
+      if (e.shiftKey) {
+        if (selectedIds.has(id)) selectedIds.delete(id);
+        else selectedIds.add(id);
+        updateSelectionVisuals();
+        return;
+      }
+      // Regular: if not selected, replace selection
+      if (!selectedIds.has(id)) {
+        selectedIds.clear();
+        selectedIds.add(id);
+        updateSelectionVisuals();
+      }
+      // Start group drag
+      const c=screenToMap(e.clientX,e.clientY); if (!c) return;
+      draggingId=id;
+      dragStartMapX=c.x; dragStartMapY=c.y;
+      dragStartPositions={};
+      selectedIds.forEach(sid => {
+        if (characters[sid]) dragStartPositions[sid]={x:characters[sid].x, y:characters[sid].y};
+      });
       e.preventDefault();
     });
     document.getElementById('map-viewport').appendChild(t);
   });
 }
 
-function commitMove(id, nx, ny) {
-  const ch = characters[id];
-  if (!ch) return;
-  const trail = ch.trail ? [...ch.trail] : [];
-  // Only record the old position if this isn't the very first move from spawn
-  if (!ch.neverMoved) {
-    trail.push({ x: ch.x, y: ch.y });
-    if (trail.length > 300) trail.splice(0, trail.length - 300);
+function updateSelectionVisuals() {
+  document.querySelectorAll('.map-token').forEach(t => {
+    t.classList.toggle('selected', selectedIds.has(t.id.replace('tok-','')));
+  });
+  const badge=document.getElementById('select-badge');
+  if (selectedIds.size>1) {
+    badge.textContent=`${selectedIds.size} героев выбрано — тяни любого`;
+    badge.style.display='block';
+  } else {
+    badge.style.display='none';
   }
-  update(ref(db,'characters/'+id), { x: nx, y: ny, trail, neverMoved: false });
+}
+
+function commitMove(id, nx, ny) {
+  const ch=characters[id]; if (!ch) return;
+  const trail=ch.trail?[...ch.trail]:[];
+  if (!ch.neverMoved) {
+    trail.push({x:ch.x,y:ch.y});
+    if (trail.length>300) trail.splice(0,trail.length-300);
+  }
+  update(ref(db,'characters/'+id),{x:nx,y:ny,trail,neverMoved:false});
 }
 
 function renderCharSidebar() {
-  const list = document.getElementById('character-list');
-  list.innerHTML = '';
+  const list=document.getElementById('character-list');
+  list.innerHTML='';
   if (!Object.keys(characters).length) {
-    list.innerHTML = '<p style="font-size:11px;color:var(--muted);font-style:italic;padding:2px 0">Пока нет персонажей</p>';
+    list.innerHTML='<p style="font-size:11px;color:var(--muted);font-style:italic;padding:2px 0">Пока нет персонажей</p>';
     return;
   }
-  Object.entries(characters).forEach(([id, ch]) => {
-    const el = document.createElement('div');
-    el.className = 'character-item';
-    el.innerHTML = `
+  Object.entries(characters).forEach(([id,ch]) => {
+    const el=document.createElement('div');
+    el.className='character-item';
+    el.innerHTML=`
       <div class="char-icon">${ch.icon}</div>
       <div class="char-info">
         <div class="char-name" style="color:${ch.color}">${ch.name}</div>
         <div class="char-player">${ch.player||''}</div>
       </div>
       <div class="char-actions">
+        <button class="icon-btn" onclick="openEditCharModal('${id}')" title="Редактировать">✎</button>
         <button class="icon-btn" onclick="clearCharTrail('${id}')" title="Очистить след">⌫</button>
         <button class="icon-btn danger" onclick="deleteChar('${id}')" title="Удалить">✕</button>
       </div>`;
@@ -825,74 +769,59 @@ function renderCharSidebar() {
 }
 
 function drawTrails() {
-  const canvas = document.getElementById('trail-canvas');
-  if (!canvas.width) return;
-  const ctx = canvas.getContext('2d');
-  ctx.clearRect(0,0,canvas.width,canvas.height);
+  const cv=document.getElementById('trail-canvas');
+  if (!cv.width) return;
+  const ctx=cv.getContext('2d');
+  ctx.clearRect(0,0,cv.width,cv.height);
   Object.values(characters).forEach(ch => {
-    const trail = ch.trail || [];
-    if (!trail.length) return;
-    const lw = ch.lineWidth || 2;
-
-    function buildPath() {
+    const trail=ch.trail||[]; if (!trail.length) return;
+    const lw=ch.lineWidth||2;
+    function p() {
       ctx.beginPath();
-      ctx.moveTo(trail[0].x*mapW, trail[0].y*mapH);
-      trail.forEach(p => ctx.lineTo(p.x*mapW, p.y*mapH));
-      ctx.lineTo(ch.x*mapW, ch.y*mapH);
+      ctx.moveTo(trail[0].x*mapW,trail[0].y*mapH);
+      trail.forEach(pt=>ctx.lineTo(pt.x*mapW,pt.y*mapH));
+      ctx.lineTo(ch.x*mapW,ch.y*mapH);
     }
-
-    // Dark outline pass
     ctx.setLineDash([7,5]);
-    ctx.strokeStyle = 'rgba(0,0,0,0.75)';
-    ctx.lineWidth = lw + 3;
-    ctx.globalAlpha = 1;
-    buildPath(); ctx.stroke();
-
-    // Colored inner pass
-    ctx.strokeStyle = ch.color;
-    ctx.lineWidth = lw;
-    ctx.globalAlpha = 0.9;
-    buildPath(); ctx.stroke();
-
-    ctx.setLineDash([]); ctx.globalAlpha = 1;
+    ctx.strokeStyle='rgba(0,0,0,0.75)'; ctx.lineWidth=lw+3; ctx.globalAlpha=1; p(); ctx.stroke();
+    ctx.strokeStyle=ch.color; ctx.lineWidth=lw; ctx.globalAlpha=0.9; p(); ctx.stroke();
+    ctx.setLineDash([]); ctx.globalAlpha=1;
   });
 }
 
-// ═══════════════ POIs ═══════════════
+// ── POIs ──
 function renderPois() {
-  document.querySelectorAll('.poi-marker').forEach(e => e.remove());
+  document.querySelectorAll('.poi-marker').forEach(e=>e.remove());
   if (!mapW) return;
-  Object.entries(pois).forEach(([id, poi]) => {
-    const m = document.createElement('div');
+  Object.entries(pois).forEach(([id,poi]) => {
+    const sz=poi.poiSize||30, fsz=Math.round(sz*0.45);
+    const hue=strHue(poi.title||'');
+    const m=document.createElement('div');
     m.className='poi-marker'; m.id='poi-'+id;
     m.style.left=(poi.x*mapW)+'px'; m.style.top=(poi.y*mapH)+'px';
-    const hue = strHue(poi.title||'');
     m.innerHTML=`
       <div class="poi-label">${poi.title||''}</div>
-      <div class="poi-pin" style="background:hsl(${hue},55%,22%)">
-        <span class="poi-pin-icon">${poi.type||'📍'}</span>
+      <div class="poi-pin" style="width:${sz}px;height:${sz}px;background:hsl(${hue},55%,22%)">
+        <span class="poi-pin-icon" style="font-size:${fsz}px">${poi.type||'📍'}</span>
       </div>`;
-    m.addEventListener('click', e => { e.stopPropagation(); togglePopup(id, m); });
+    m.addEventListener('click', e=>{e.stopPropagation(); togglePopup(id,m);});
     document.getElementById('map-viewport').appendChild(m);
   });
 }
 
 function renderPoiSidebar() {
-  const list = document.getElementById('poi-list');
-  list.innerHTML = '';
+  const list=document.getElementById('poi-list');
+  list.innerHTML='';
   if (!Object.keys(pois).length) {
-    list.innerHTML = '<p style="font-size:11px;color:var(--muted);font-style:italic;padding:2px 0">Пока нет меток</p>';
+    list.innerHTML='<p style="font-size:11px;color:var(--muted);font-style:italic;padding:2px 0">Пока нет меток</p>';
     return;
   }
-  Object.entries(pois).forEach(([id, poi]) => {
-    const el = document.createElement('div');
-    el.className = 'character-item';
-    el.style.cursor = 'pointer';
+  Object.entries(pois).forEach(([id,poi]) => {
+    const el=document.createElement('div');
+    el.className='character-item';
     el.innerHTML=`
       <div class="char-icon">${poi.type||'📍'}</div>
-      <div class="char-info">
-        <div class="char-name" style="font-size:12px">${poi.title||'Без названия'}</div>
-      </div>
+      <div class="char-info"><div class="char-name" style="font-size:12px">${poi.title||'Без названия'}</div></div>
       <div class="char-actions">
         <button class="icon-btn" onclick="startEditPoi('${id}')" title="Редактировать">✎</button>
         <button class="icon-btn danger" onclick="deletePoi('${id}')" title="Удалить">✕</button>
@@ -902,117 +831,89 @@ function renderPoiSidebar() {
 }
 
 function togglePopup(id, markerEl) {
-  document.querySelectorAll('.poi-popup').forEach(e => e.remove());
-  if (openPopupId === id) { openPopupId=null; return; }
-  openPopupId = id;
-  const poi = pois[id]; if (!poi) return;
-
-  const imgSrc = poi.imageData || poi.imageUrl || '';
-  const popup = document.createElement('div');
-  popup.className = 'poi-popup';
-  popup.innerHTML = `
-    ${imgSrc ? `<div class="poi-img-wrap"><img src="${imgSrc}" alt="" onerror="this.parentElement.style.display='none'"></div>` : ''}
+  document.querySelectorAll('.poi-popup').forEach(e=>e.remove());
+  if (openPopupId===id) { openPopupId=null; return; }
+  openPopupId=id;
+  const poi=pois[id]; if (!poi) return;
+  const imgSrc=poi.imageData||poi.imageUrl||'';
+  const popup=document.createElement('div');
+  popup.className='poi-popup';
+  popup.innerHTML=`
+    ${imgSrc?`<div class="poi-img-wrap"><img src="${imgSrc}" alt="" onerror="this.parentElement.style.display='none'"></div>`:''}
     <h3>${poi.title||'Без названия'}</h3>
-    ${poi.text ? `<div class="poi-desc">${poi.text}</div>` : ''}
+    ${poi.text?`<div class="poi-desc">${poi.text}</div>`:''}
     <div class="poi-popup-actions">
       <button class="btn" onclick="startEditPoi('${id}')">✎ Изменить</button>
-      <button class="btn" style="color:#e88;border-color:#8b1a1a" onclick="deletePoi('${id}');document.querySelectorAll('.poi-popup').forEach(e=>e.remove());openPopupId=null">✕ Удалить</button>
+      <button class="btn" style="color:#e88;border-color:#8b1a1a"
+        onclick="deletePoi('${id}');document.querySelectorAll('.poi-popup').forEach(e=>e.remove());openPopupId=null">✕ Удалить</button>
     </div>`;
   markerEl.appendChild(popup);
-
-  setTimeout(() => {
-    document.addEventListener('click', function close(e) {
-      if (!popup.contains(e.target) && !markerEl.contains(e.target)) {
+  setTimeout(()=>{
+    document.addEventListener('click',function close(e){
+      if(!popup.contains(e.target)&&!markerEl.contains(e.target)){
         popup.remove(); openPopupId=null;
-        document.removeEventListener('click', close);
+        document.removeEventListener('click',close);
       }
     });
-  }, 0);
+  },0);
 }
 
-let pendingPoiImageData = null; // base64 for uploaded images
-
-window.handlePoiImageFile = function(input) {
-  const file = input.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = e => {
-    pendingPoiImageData = e.target.result;
-    document.getElementById('poi-img-input').value = '';
-    const preview = document.getElementById('poi-img-preview');
-    const previewImg = document.getElementById('poi-img-preview-img');
-    previewImg.src = pendingPoiImageData;
-    preview.style.display = 'block';
-  };
-  reader.readAsDataURL(file);
-};
-
-window.startEditPoi = function(id) {
-  const poi = pois[id]; if (!poi) return;
-  document.querySelectorAll('.poi-popup').forEach(e => e.remove());
-  openPopupId = null;
-  editingPoiId = id;
-  pendingPoiX = poi.x; pendingPoiY = poi.y;
-  pendingPoiImageData = null;
-  document.getElementById('poi-modal-title').textContent = '✎ Редактировать метку';
-  document.getElementById('poi-title-input').value = poi.title  || '';
-  document.getElementById('poi-text-input').value  = poi.text   || '';
-  document.getElementById('poi-img-input').value   = poi.imageUrl || '';
-  document.getElementById('poi-img-file').value    = '';
-  const preview = document.getElementById('poi-img-preview');
-  const previewImg = document.getElementById('poi-img-preview-img');
-  if (poi.imageData) {
-    previewImg.src = poi.imageData; preview.style.display = 'block';
-    pendingPoiImageData = poi.imageData;
-  } else { preview.style.display = 'none'; }
-  selPoiType = poi.type || '📍';
-  document.querySelectorAll('#poi-type-picker .emoji-opt').forEach(el => {
-    el.classList.toggle('selected', el.textContent.trim() === selPoiType);
-  });
-  document.getElementById('poi-modal').style.display='flex';
-};
-
-// ═══════════════ MODAL HANDLERS ═══════════════
+// ── CHAR MODAL ──
 window.openAddCharModal = function() {
+  editingCharId=null;
+  document.getElementById('char-modal-title').textContent='⚔ Новый персонаж';
+  document.getElementById('char-save-btn').textContent='Создать';
+  document.getElementById('char-name-input').value='';
+  document.getElementById('char-player-input').value='';
+  setEmojiPicker('emoji-picker', CHAR_EMOJIS[0]); selEmoji=CHAR_EMOJIS[0];
+  setColorPicker(COLORS[0]);
+  setSlider('token-size-input','token-size-val',44,'px'); selTokenSize=44;
+  setSlider('trail-width-input','trail-width-val',2,''); selLineWidth=2;
   document.getElementById('char-modal').style.display='flex';
-  document.getElementById('char-name-input').value   = '';
-  document.getElementById('char-player-input').value = '';
 };
-window.closeCharModal = function() {
-  document.getElementById('char-modal').style.display='none';
+window.openEditCharModal = function(id) {
+  const ch=characters[id]; if (!ch) return;
+  editingCharId=id;
+  document.getElementById('char-modal-title').textContent='✎ Редактировать персонажа';
+  document.getElementById('char-save-btn').textContent='Сохранить';
+  document.getElementById('char-name-input').value=ch.name||'';
+  document.getElementById('char-player-input').value=ch.player||'';
+  setEmojiPicker('emoji-picker', ch.icon||CHAR_EMOJIS[0]); selEmoji=ch.icon||CHAR_EMOJIS[0];
+  setColorPicker(ch.color||COLORS[0]);
+  const ts=ch.tokenSize||44, lw=ch.lineWidth||2;
+  setSlider('token-size-input','token-size-val',ts,'px'); selTokenSize=ts;
+  setSlider('trail-width-input','trail-width-val',lw,''); selLineWidth=lw;
+  document.getElementById('char-modal').style.display='flex';
 };
+window.closeCharModal = ()=>document.getElementById('char-modal').style.display='none';
 window.saveCharacter = function() {
-  const name = document.getElementById('char-name-input').value.trim();
+  const name=document.getElementById('char-name-input').value.trim();
   if (!name) { document.getElementById('char-name-input').focus(); return; }
-  push(ref(db,'characters'), {
-    name,
-    player: document.getElementById('char-player-input').value.trim(),
-    icon: selEmoji, color: selColor, lineWidth: selLineWidth,
-    x: 0.5, y: 0.5, trail: [], neverMoved: true
-  });
+  const data={
+    name, player:document.getElementById('char-player-input').value.trim(),
+    icon:selEmoji, color:selColor, lineWidth:selLineWidth, tokenSize:selTokenSize
+  };
+  if (editingCharId) update(ref(db,'characters/'+editingCharId), data);
+  else push(ref(db,'characters'),{...data,x:0.5,y:0.5,trail:[],neverMoved:true});
   closeCharModal();
 };
-window.clearCharTrail = function(id) {
-  update(ref(db,'characters/'+id), { trail: [], neverMoved: true });
-};
-window.deleteChar = function(id) {
-  if (confirm('Удалить персонажа?')) remove(ref(db,'characters/'+id));
-};
+window.clearCharTrail = id=>update(ref(db,'characters/'+id),{trail:[],neverMoved:true});
+window.deleteChar = id=>{ if(confirm('Удалить персонажа?')) remove(ref(db,'characters/'+id)); };
 
+// ── POI MODAL ──
 window.togglePoiMode = function() {
-  isPoiMode = !isPoiMode;
-  const btn = document.getElementById('add-poi-btn');
-  const con = document.getElementById('map-container');
-  btn.textContent = isPoiMode ? '✕ Отмена' : '+ Поставить метку';
-  btn.classList.toggle('active', isPoiMode);
-  con.classList.toggle('adding-poi', isPoiMode);
-  setStatus(isPoiMode ? 'Кликни на карту, чтобы поставить метку' : '');
+  isPoiMode=!isPoiMode;
+  const btn=document.getElementById('add-poi-btn');
+  const con=document.getElementById('map-container');
+  btn.textContent=isPoiMode?'✕ Отмена':'+ Поставить метку';
+  btn.classList.toggle('active',isPoiMode);
+  con.classList.toggle('adding-poi',isPoiMode);
+  setStatus(isPoiMode?'Кликни на карту, чтобы поставить метку':'');
 };
 window.cancelPoi = function() {
-  editingPoiId = null;
-  pendingPoiImageData = null;
-  document.getElementById('poi-img-file').value = '';
-  document.getElementById('poi-img-preview').style.display = 'none';
+  editingPoiId=null; pendingPoiImageData=null;
+  document.getElementById('poi-img-file').value='';
+  document.getElementById('poi-img-preview').style.display='none';
   document.getElementById('poi-modal').style.display='none';
   isPoiMode=false;
   document.getElementById('add-poi-btn').textContent='+ Поставить метку';
@@ -1020,47 +921,79 @@ window.cancelPoi = function() {
   document.getElementById('map-container').classList.remove('adding-poi');
   setStatus('');
 };
-window.savePoi = function() {
-  const title    = document.getElementById('poi-title-input').value.trim();
-  const text     = document.getElementById('poi-text-input').value.trim();
-  const imageUrl = document.getElementById('poi-img-input').value.trim();
-  const imageData = pendingPoiImageData || null;
-  const data = { title, text, imageUrl, imageData, type: selPoiType, x: pendingPoiX, y: pendingPoiY };
-  if (editingPoiId) update(ref(db,'pois/'+editingPoiId), data);
-  else              push(ref(db,'pois'), data);
-  pendingPoiImageData = null;
-  cancelPoi();
+window.startEditPoi = function(id) {
+  const poi=pois[id]; if (!poi) return;
+  document.querySelectorAll('.poi-popup').forEach(e=>e.remove()); openPopupId=null;
+  editingPoiId=id; pendingPoiX=poi.x; pendingPoiY=poi.y; pendingPoiImageData=null;
+  document.getElementById('poi-modal-title').textContent='✎ Редактировать метку';
+  document.getElementById('poi-title-input').value=poi.title||'';
+  document.getElementById('poi-text-input').value=poi.text||'';
+  document.getElementById('poi-img-input').value=poi.imageUrl||'';
+  document.getElementById('poi-img-file').value='';
+  const prev=document.getElementById('poi-img-preview');
+  const prevImg=document.getElementById('poi-img-preview-img');
+  if (poi.imageData) { prevImg.src=poi.imageData; prev.style.display='block'; pendingPoiImageData=poi.imageData; }
+  else prev.style.display='none';
+  const sz=poi.poiSize||30;
+  setSlider('poi-size-input','poi-size-val',sz,'px'); selPoiSize=sz;
+  selPoiType=poi.type||'📍';
+  setEmojiPicker('poi-type-picker', selPoiType);
+  document.getElementById('poi-modal').style.display='flex';
 };
-window.deletePoi = function(id) {
-  if (confirm('Удалить метку?')) remove(ref(db,'pois/'+id));
+window.savePoi = function() {
+  const title=document.getElementById('poi-title-input').value.trim();
+  const text=document.getElementById('poi-text-input').value.trim();
+  const imageUrl=document.getElementById('poi-img-input').value.trim();
+  const imageData=pendingPoiImageData||null;
+  const data={title,text,imageUrl,imageData,type:selPoiType,poiSize:selPoiSize,x:pendingPoiX,y:pendingPoiY};
+  if (editingPoiId) update(ref(db,'pois/'+editingPoiId),data);
+  else push(ref(db,'pois'),data);
+  pendingPoiImageData=null; cancelPoi();
+};
+window.deletePoi = id=>{ if(confirm('Удалить метку?')) remove(ref(db,'pois/'+id)); };
+window.handlePoiImageFile = function(input) {
+  const file=input.files[0]; if (!file) return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    pendingPoiImageData=e.target.result;
+    document.getElementById('poi-img-input').value='';
+    document.getElementById('poi-img-preview-img').src=pendingPoiImageData;
+    document.getElementById('poi-img-preview').style.display='block';
+  };
+  reader.readAsDataURL(file);
 };
 window.applyMapUrl = function() {
-  const url = document.getElementById('map-url-input').value.trim();
-  if (url) set(ref(db,'mapUrl'), url);
+  const url=document.getElementById('map-url-input').value.trim();
+  if (url) set(ref(db,'mapUrl'),url);
 };
 window.clearAllTrails = function() {
-  if (!confirm('Очистить все пунктирные следы на карте?')) return;
-  Object.keys(characters).forEach(id => update(ref(db,'characters/'+id), { trail: [] }));
+  if (!confirm('Очистить все пунктирные следы?')) return;
+  Object.keys(characters).forEach(id=>update(ref(db,'characters/'+id),{trail:[],neverMoved:true}));
 };
 
-// ═══════════════ UI BUILDERS ═══════════════
+// ── UI HELPERS ──
 function buildEmojiPicker(containerId, emojis, onSelect, initial) {
-  const c = document.getElementById(containerId); c.innerHTML='';
-  emojis.forEach(e => {
-    const el = document.createElement('div');
-    el.className = 'emoji-opt' + (e===initial?' selected':'');
-    el.textContent = e;
-    el.addEventListener('click', () => {
+  const c=document.getElementById(containerId); c.innerHTML='';
+  emojis.forEach(e=>{
+    const el=document.createElement('div');
+    el.className='emoji-opt'+(e===initial?' selected':'');
+    el.textContent=e;
+    el.addEventListener('click',()=>{
       c.querySelectorAll('.emoji-opt').forEach(x=>x.classList.remove('selected'));
       el.classList.add('selected'); onSelect(e);
     });
     c.appendChild(el);
   });
 }
+function setEmojiPicker(containerId, value) {
+  document.querySelectorAll('#'+containerId+' .emoji-opt').forEach(el=>{
+    el.classList.toggle('selected', el.textContent.trim()===value);
+  });
+}
 function buildColorPicker() {
-  const c = document.getElementById('color-picker');
-  COLORS.forEach(col => {
-    const el = document.createElement('div');
+  const c=document.getElementById('color-picker');
+  COLORS.forEach(col=>{
+    const el=document.createElement('div');
     el.className='color-opt'+(col===selColor?' selected':'');
     el.style.background=col;
     el.addEventListener('click',()=>{
@@ -1070,16 +1003,25 @@ function buildColorPicker() {
     c.appendChild(el);
   });
 }
-
-function strHue(s) {
-  let h=0; for(let i=0;i<s.length;i++) h=(h*31+s.charCodeAt(i))%360; return h;
+function setColorPicker(col) {
+  selColor=col;
+  document.querySelectorAll('#color-picker .color-opt').forEach(el=>{
+    // compare hex
+    const bg=el.style.background;
+    el.classList.toggle('selected', bg===col);
+  });
 }
+function setSlider(inputId, valId, value, suffix) {
+  const inp=document.getElementById(inputId), val=document.getElementById(valId);
+  if (inp) inp.value=value;
+  if (val) val.textContent=value+suffix;
+}
+function strHue(s) { let h=0; for(let i=0;i<s.length;i++) h=(h*31+s.charCodeAt(i))%360; return h; }
 function setStatus(msg) {
-  const bar = document.getElementById('status-bar');
-  bar.textContent = msg||''; bar.style.opacity = msg?'1':'0';
+  const bar=document.getElementById('status-bar');
+  bar.textContent=msg||''; bar.style.opacity=msg?'1':'0';
 }
 
-// ═══════════════ START ═══════════════
 init();
 </script>
 </body>
