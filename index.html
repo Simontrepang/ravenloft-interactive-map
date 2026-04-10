@@ -410,16 +410,14 @@ body {
     <div class="form-group">
       <label>Размер токена</label>
       <div class="slider-row">
-        <input type="range" id="token-size-input" min="24" max="96" value="44" step="4"
-          oninput="selTokenSize=+this.value;document.getElementById('token-size-val').textContent=this.value+'px'">
+        <input type="range" id="token-size-input" min="24" max="96" value="44" step="4">
         <span id="token-size-val" class="slider-val">44px</span>
       </div>
     </div>
     <div class="form-group">
       <label>Толщина следа</label>
       <div class="slider-row">
-        <input type="range" id="trail-width-input" min="1" max="8" value="2" step="1"
-          oninput="selLineWidth=+this.value;document.getElementById('trail-width-val').textContent=this.value">
+        <input type="range" id="trail-width-input" min="1" max="8" value="2" step="1">
         <span id="trail-width-val" class="slider-val">2</span>
       </div>
     </div>
@@ -462,8 +460,7 @@ body {
     <div class="form-group">
       <label>Размер метки</label>
       <div class="slider-row">
-        <input type="range" id="poi-size-input" min="16" max="60" value="30" step="2"
-          oninput="selPoiSize=+this.value;document.getElementById('poi-size-val').textContent=this.value+'px'">
+        <input type="range" id="poi-size-input" min="16" max="60" value="30" step="2">
         <span id="poi-size-val" class="slider-val">30px</span>
       </div>
     </div>
@@ -526,6 +523,20 @@ function init() {
   buildEmojiPicker('emoji-picker',    CHAR_EMOJIS, v => selEmoji   = v, CHAR_EMOJIS[0]);
   buildEmojiPicker('poi-type-picker', POI_TYPES,   v => selPoiType = v, POI_TYPES[0]);
   buildColorPicker();
+
+  // Wire sliders
+  document.getElementById('token-size-input').addEventListener('input', function() {
+    selTokenSize = +this.value;
+    document.getElementById('token-size-val').textContent = this.value + 'px';
+  });
+  document.getElementById('trail-width-input').addEventListener('input', function() {
+    selLineWidth = +this.value;
+    document.getElementById('trail-width-val').textContent = this.value;
+  });
+  document.getElementById('poi-size-input').addEventListener('input', function() {
+    selPoiSize = +this.value;
+    document.getElementById('poi-size-val').textContent = this.value + 'px';
+  });
 
   onValue(ref(db,'characters'), snap => {
     characters = snap.val() || {};
