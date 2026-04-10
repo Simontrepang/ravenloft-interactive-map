@@ -385,7 +385,21 @@ body {
 }
 .poi-popup h3 { font-family: 'Cinzel', serif; font-size: 13px; color: var(--accent); margin-bottom: 8px; }
 .poi-popup .poi-desc { font-size: 12px; color: var(--text); line-height: 1.55; margin-bottom: 8px; white-space: pre-wrap; }
-.poi-popup img { width: 100%; border-radius: 4px; margin-bottom: 10px; max-height: 160px; object-fit: cover; border: 1px solid var(--border); }
+.poi-img-wrap {
+  width: 100%;
+  margin-bottom: 10px;
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: #000;
+  line-height: 0;
+}
+.poi-img-wrap img {
+  width: 100%;
+  max-height: 200px;
+  object-fit: contain;
+  display: block;
+}
 .poi-popup-actions { display: flex; gap: 6px; margin-top: 10px; }
 .poi-popup-actions .btn { padding: 5px 8px; font-size: 9px; margin-top: 0; }
 
@@ -485,6 +499,15 @@ body {
       <label>Цвет следа</label>
       <div class="color-grid" id="color-picker"></div>
     </div>
+    <div class="form-group">
+      <label>Толщина следа</label>
+      <div style="display:flex; gap:8px; align-items:center; margin-top:4px;">
+        <input type="range" id="trail-width-input" min="1" max="6" value="2" step="1"
+          style="flex:1; accent-color:var(--accent);"
+          oninput="selLineWidth=+this.value; document.getElementById('trail-width-val').textContent=this.value">
+        <span id="trail-width-val" style="font-family:'Cinzel',serif; font-size:12px; color:var(--accent); min-width:14px; text-align:right;">2</span>
+      </div>
+    </div>
     <div class="modal-actions">
       <button class="btn" onclick="closeCharModal()">Отмена</button>
       <button class="btn primary" onclick="saveCharacter()">Создать</button>
@@ -505,8 +528,17 @@ body {
       <textarea id="poi-text-input" placeholder="Что здесь произошло?"></textarea>
     </div>
     <div class="form-group">
-      <label>URL картинки (необязательно)</label>
-      <input type="text" id="poi-img-input" placeholder="https://...">
+      <label>Картинка</label>
+      <input type="text" id="poi-img-input" placeholder="URL: https://...">
+      <div style="display:flex;align-items:center;gap:8px;margin-top:8px;">
+        <label style="text-transform:none;letter-spacing:0;font-size:11px;color:var(--muted);font-family:'IM Fell English',serif;font-style:italic;margin:0;">или загрузить файл:</label>
+        <input type="file" id="poi-img-file" accept="image/*"
+          style="font-size:11px;color:var(--muted);flex:1;"
+          onchange="handlePoiImageFile(this)">
+      </div>
+      <div id="poi-img-preview" style="margin-top:8px;display:none;">
+        <img id="poi-img-preview-img" style="width:100%;max-height:120px;object-fit:contain;border-radius:4px;border:1px solid var(--border);">
+      </div>
     </div>
     <div class="form-group">
       <label>Тип метки</label>
@@ -548,7 +580,7 @@ let isPanning=false, panSX=0, panSY=0, panOX=0, panOY=0;
 let mapW=0, mapH=0;
 let isPoiMode=false;
 let pendingPoiX=0, pendingPoiY=0;
-let selEmoji=CHAR_EMOJIS[0], selColor=COLORS[0], selPoiType=POI_TYPES[0];
+let selEmoji=CHAR_EMOJIS[0], selColor=COLORS[0], selPoiType=POI_TYPES[0], selLineWidth=2;
 let characters={}, pois={};
 let draggingId=null, dragOX=0, dragOY=0;
 let editingPoiId=null;
@@ -760,9 +792,12 @@ function commitMove(id, nx, ny) {
   const ch = characters[id];
   if (!ch) return;
   const trail = ch.trail ? [...ch.trail] : [];
-  trail.push({ x: ch.x, y: ch.y });
-  if (trail.length > 300) trail.splice(0, trail.length - 300);
-  update(ref(db,'characters/'+id), { x: nx, y: ny, trail });
+  // Only record the old position if this isn't the very first move from spawn
+  if (!ch.neverMoved) {
+    trail.push({ x: ch.x, y: ch.y });
+    if (trail.length > 300) trail.splice(0, trail.length - 300);
+  }
+  update(ref(db,'characters/'+id), { x: nx, y: ny, trail, neverMoved: false });
 }
 
 function renderCharSidebar() {
@@ -782,6 +817,7 @@ function renderCharSidebar() {
         <div class="char-player">${ch.player||''}</div>
       </div>
       <div class="char-actions">
+        <button class="icon-btn" onclick="clearCharTrail('${id}')" title="Очистить след">⌫</button>
         <button class="icon-btn danger" onclick="deleteChar('${id}')" title="Удалить">✕</button>
       </div>`;
     list.appendChild(el);
@@ -796,15 +832,28 @@ function drawTrails() {
   Object.values(characters).forEach(ch => {
     const trail = ch.trail || [];
     if (!trail.length) return;
-    ctx.beginPath();
+    const lw = ch.lineWidth || 2;
+
+    function buildPath() {
+      ctx.beginPath();
+      ctx.moveTo(trail[0].x*mapW, trail[0].y*mapH);
+      trail.forEach(p => ctx.lineTo(p.x*mapW, p.y*mapH));
+      ctx.lineTo(ch.x*mapW, ch.y*mapH);
+    }
+
+    // Dark outline pass
     ctx.setLineDash([7,5]);
+    ctx.strokeStyle = 'rgba(0,0,0,0.75)';
+    ctx.lineWidth = lw + 3;
+    ctx.globalAlpha = 1;
+    buildPath(); ctx.stroke();
+
+    // Colored inner pass
     ctx.strokeStyle = ch.color;
-    ctx.lineWidth = 2;
-    ctx.globalAlpha = 0.65;
-    ctx.moveTo(trail[0].x*mapW, trail[0].y*mapH);
-    trail.forEach(p => ctx.lineTo(p.x*mapW, p.y*mapH));
-    ctx.lineTo(ch.x*mapW, ch.y*mapH);
-    ctx.stroke();
+    ctx.lineWidth = lw;
+    ctx.globalAlpha = 0.9;
+    buildPath(); ctx.stroke();
+
     ctx.setLineDash([]); ctx.globalAlpha = 1;
   });
 }
@@ -858,10 +907,11 @@ function togglePopup(id, markerEl) {
   openPopupId = id;
   const poi = pois[id]; if (!poi) return;
 
+  const imgSrc = poi.imageData || poi.imageUrl || '';
   const popup = document.createElement('div');
   popup.className = 'poi-popup';
   popup.innerHTML = `
-    ${poi.imageUrl ? `<img src="${poi.imageUrl}" alt="" onerror="this.style.display='none'">` : ''}
+    ${imgSrc ? `<div class="poi-img-wrap"><img src="${imgSrc}" alt="" onerror="this.parentElement.style.display='none'"></div>` : ''}
     <h3>${poi.title||'Без названия'}</h3>
     ${poi.text ? `<div class="poi-desc">${poi.text}</div>` : ''}
     <div class="poi-popup-actions">
@@ -880,18 +930,42 @@ function togglePopup(id, markerEl) {
   }, 0);
 }
 
+let pendingPoiImageData = null; // base64 for uploaded images
+
+window.handlePoiImageFile = function(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    pendingPoiImageData = e.target.result;
+    document.getElementById('poi-img-input').value = '';
+    const preview = document.getElementById('poi-img-preview');
+    const previewImg = document.getElementById('poi-img-preview-img');
+    previewImg.src = pendingPoiImageData;
+    preview.style.display = 'block';
+  };
+  reader.readAsDataURL(file);
+};
+
 window.startEditPoi = function(id) {
   const poi = pois[id]; if (!poi) return;
   document.querySelectorAll('.poi-popup').forEach(e => e.remove());
   openPopupId = null;
   editingPoiId = id;
   pendingPoiX = poi.x; pendingPoiY = poi.y;
+  pendingPoiImageData = null;
   document.getElementById('poi-modal-title').textContent = '✎ Редактировать метку';
   document.getElementById('poi-title-input').value = poi.title  || '';
   document.getElementById('poi-text-input').value  = poi.text   || '';
   document.getElementById('poi-img-input').value   = poi.imageUrl || '';
+  document.getElementById('poi-img-file').value    = '';
+  const preview = document.getElementById('poi-img-preview');
+  const previewImg = document.getElementById('poi-img-preview-img');
+  if (poi.imageData) {
+    previewImg.src = poi.imageData; preview.style.display = 'block';
+    pendingPoiImageData = poi.imageData;
+  } else { preview.style.display = 'none'; }
   selPoiType = poi.type || '📍';
-  // Highlight current type
   document.querySelectorAll('#poi-type-picker .emoji-opt').forEach(el => {
     el.classList.toggle('selected', el.textContent.trim() === selPoiType);
   });
@@ -913,10 +987,13 @@ window.saveCharacter = function() {
   push(ref(db,'characters'), {
     name,
     player: document.getElementById('char-player-input').value.trim(),
-    icon: selEmoji, color: selColor,
-    x: 0.5, y: 0.5, trail: []
+    icon: selEmoji, color: selColor, lineWidth: selLineWidth,
+    x: 0.5, y: 0.5, trail: [], neverMoved: true
   });
   closeCharModal();
+};
+window.clearCharTrail = function(id) {
+  update(ref(db,'characters/'+id), { trail: [], neverMoved: true });
 };
 window.deleteChar = function(id) {
   if (confirm('Удалить персонажа?')) remove(ref(db,'characters/'+id));
@@ -933,6 +1010,9 @@ window.togglePoiMode = function() {
 };
 window.cancelPoi = function() {
   editingPoiId = null;
+  pendingPoiImageData = null;
+  document.getElementById('poi-img-file').value = '';
+  document.getElementById('poi-img-preview').style.display = 'none';
   document.getElementById('poi-modal').style.display='none';
   isPoiMode=false;
   document.getElementById('add-poi-btn').textContent='+ Поставить метку';
@@ -944,9 +1024,11 @@ window.savePoi = function() {
   const title    = document.getElementById('poi-title-input').value.trim();
   const text     = document.getElementById('poi-text-input').value.trim();
   const imageUrl = document.getElementById('poi-img-input').value.trim();
-  const data = { title, text, imageUrl, type: selPoiType, x: pendingPoiX, y: pendingPoiY };
+  const imageData = pendingPoiImageData || null;
+  const data = { title, text, imageUrl, imageData, type: selPoiType, x: pendingPoiX, y: pendingPoiY };
   if (editingPoiId) update(ref(db,'pois/'+editingPoiId), data);
   else              push(ref(db,'pois'), data);
+  pendingPoiImageData = null;
   cancelPoi();
 };
 window.deletePoi = function(id) {
